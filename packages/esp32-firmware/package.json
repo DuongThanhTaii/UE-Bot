@@ -1,0 +1,14 @@
+{
+  "name": "@ue-bot/esp32-firmware",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PlatformIO firmware for ESP32-S3",
+  "scripts": {
+    "build": "pio run",
+    "build:s3": "pio run -e esp32-s3",
+    "upload": "pio run -t upload",
+    "upload:s3": "pio run -t upload -e esp32-s3",
+    "monitor": "pio device monitor",
+    "clean": "pio run -t clean"
+  }
+}

@@ -8,7 +8,7 @@ Express.js backend service connecting ESP32, Webapp, and Moltbot.
 - **services/** - Business logic services
 - **utils/** - Utility functions
 - **types/** - TypeScript type definitions
-- **__tests__/** - Unit tests
+- ****tests**/** - Unit tests
 
 ## Scripts
 
