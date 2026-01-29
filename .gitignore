@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# ESP32 build outputs
+packages/esp32-firmware/.pio/
+packages/esp32-firmware/.vscode/
+packages/esp32-firmware/__pycache__/
+
+# Docker
+*.dockerfile.local
+
+# Misc
+*.bak
+*.tmp
+*.temp
+
+# Moltbot local config (in submodule)
+external/moltbot/.env
+external/moltbot/.env.local
+external/moltbot/node_modules/
+external/moltbot/dist/
