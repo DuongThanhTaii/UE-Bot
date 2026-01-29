@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    "eamodio.gitlens",
+    "GitHub.copilot",
+    "ms-azuretools.vscode-docker",
+    "ms-python.python",
+    "platformio.platformio-ide",
+    "rust-lang.rust-analyzer"
+  ]
+}

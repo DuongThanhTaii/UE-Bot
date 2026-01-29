@@ -1,0 +1,97 @@
+// @ts-check
+import eslint from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  // Ignore patterns
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/coverage/**',
+      '**/.turbo/**',
+      '**/.pio/**',
+      '*.config.js',
+      '*.config.mjs',
+      '*.config.cjs',
+    ],
+  },
+
+  // Base ESLint rules
+  eslint.configs.recommended,
+
+  // TypeScript rules
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+
+  // Project-specific settings
+  {
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.json', './packages/*/tsconfig.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      import: importPlugin,
+    },
+    rules: {
+      // TypeScript specific
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+        },
+      ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
+
+      // Import rules
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+      'import/no-duplicates': 'error',
+
+      // General
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+      eqeqeq: ['error', 'always'],
+    },
+  },
+
+  // Test files relaxed rules
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts', '**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
+
+  // Next.js specific
+  {
+    files: ['packages/webapp/**/*.{ts,tsx}'],
+    rules: {
+      '@next/next/no-html-link-for-pages': 'off',
+    },
+  }
+);

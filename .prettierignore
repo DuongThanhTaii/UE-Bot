@@ -2,6 +2,19 @@ node_modules/
 .next/
 dist/
 .turbo/
-
-**/*.log
+.pio/
+build/
+coverage/
+.git/
 *.lock
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Vendored files
+/external/moltbot/
+
+# Generated files
+*.generated.ts
+.DS_Store
+
