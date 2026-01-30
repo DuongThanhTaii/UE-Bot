@@ -1,13 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     "composite": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@ue-bot/shared": ["../shared/src"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],
