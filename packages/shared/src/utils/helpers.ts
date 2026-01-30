@@ -14,8 +14,9 @@ export function formatBytes(bytes: number, decimals = 2): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const size = sizes[i] ?? 'Bytes';
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return `${String(parseFloat((bytes / Math.pow(k, i)).toFixed(dm)))} ${size}`;
 }
 
 export function formatDuration(ms: number): string {
@@ -24,12 +25,12 @@ export function formatDuration(ms: number): string {
   const hours = Math.floor(minutes / 60);
 
   if (hours > 0) {
-    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    return `${String(hours)}h ${String(minutes % 60)}m ${String(seconds % 60)}s`;
   }
   if (minutes > 0) {
-    return `${minutes}m ${seconds % 60}s`;
+    return `${String(minutes)}m ${String(seconds % 60)}s`;
   }
-  return `${seconds}s`;
+  return `${String(seconds)}s`;
 }
 
 export function clamp(value: number, min: number, max: number): number {

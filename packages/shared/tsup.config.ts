@@ -1,19 +1,17 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: {
-    index: 'src/index.ts',
-    'types/index': 'src/types/index.ts',
-    'utils/index': 'src/utils/index.ts',
-    'constants/index': 'src/constants/index.ts',
-  },
+  entry: ['src/index.ts', 'src/types/index.ts', 'src/utils/index.ts', 'src/constants/index.ts'],
   format: ['cjs', 'esm'],
-  dts: {
-    resolve: true,
-  },
-  tsconfig: 'tsconfig.json',
+  dts: true,
+  outDir: 'dist',
   clean: true,
   sourcemap: true,
   splitting: false,
   treeshake: true,
+  outExtension({ format }) {
+    return {
+      js: format === 'esm' ? '.mjs' : '.js',
+    };
+  },
 });

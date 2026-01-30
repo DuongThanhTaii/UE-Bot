@@ -1,8 +1,9 @@
+import { createServer, type Server as HTTPServer } from 'http';
+
 import compression from 'compression';
 import cors from 'cors';
 import express, { type Express, type Request, type Response } from 'express';
 import helmet from 'helmet';
-import { createServer, type Server as HTTPServer } from 'http';
 import { WebSocketServer, type WebSocket } from 'ws';
 
 import { config } from './config';
@@ -75,7 +76,7 @@ export class Server {
 
   private setupWebSocket(): void {
     this.wss.on('connection', (ws: WebSocket, req) => {
-      const deviceId = req.url?.split('?id=')[1] || 'unknown';
+      const deviceId = req.url?.split('?id=')[1] ?? 'unknown';
       logger.info({ deviceId }, 'ESP32 device connected');
 
       this.esp32Handler.handleConnection(ws, deviceId);

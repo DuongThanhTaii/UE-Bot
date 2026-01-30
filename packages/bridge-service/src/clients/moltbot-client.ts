@@ -35,11 +35,11 @@ export class MoltbotClient {
 
     if (!response.ok) {
       throw new Error(
-        `Moltbot error: ${response.status} ${response.statusText}`,
+        `Moltbot error: ${String(response.status)} ${response.statusText}`,
       );
     }
 
-    return response.json();
+    return response.json() as Promise<ChatResponse>;
   }
 
   async healthCheck(): Promise<boolean> {
@@ -71,7 +71,7 @@ export class MoltbotClient {
       throw new Error(`Failed to get conversation: ${response.statusText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<ChatMessage[]>;
   }
 }
 

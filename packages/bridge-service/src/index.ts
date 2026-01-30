@@ -5,9 +5,9 @@ import { logger } from './utils/logger';
 const server = new Server();
 
 // Graceful shutdown
-const shutdown = async () => {
+const shutdown = (): void => {
   logger.info('Shutting down...');
-  await server.stop();
+  void server.stop();
   process.exit(0);
 };
 

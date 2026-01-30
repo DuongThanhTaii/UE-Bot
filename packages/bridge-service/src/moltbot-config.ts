@@ -13,14 +13,20 @@ export interface MoltbotConfig {
 }
 
 export const moltbotConfig: MoltbotConfig = {
-  baseUrl: process.env.MOLTBOT_URL || "http://localhost:3001",
-  apiKey: process.env.MOLTBOT_API_KEY,
+  baseUrl: process.env["MOLTBOT_URL"] ?? "http://localhost:3001",
+  apiKey: process.env["MOLTBOT_API_KEY"],
   timeout: 30000, // 30 seconds for AI responses
   retryAttempts: 3,
   retryDelay: 1000,
 };
 
-export const getMoltbotEndpoints = (config: MoltbotConfig) => ({
+interface MoltbotEndpoints {
+  chat: string;
+  health: string;
+  conversation: string;
+}
+
+export const getMoltbotEndpoints = (config: MoltbotConfig): MoltbotEndpoints => ({
   chat: `${config.baseUrl}/api/chat`,
   health: `${config.baseUrl}/health`,
   conversation: `${config.baseUrl}/api/conversation`,

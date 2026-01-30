@@ -33,11 +33,11 @@
     "prepare": "husky || true"
   },
   "devDependencies": {
-    "@eslint/js": "^8.57.0",
+    "@eslint/js": "^9.0.0",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "@typescript-eslint/parser": "^6.20.0",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
     "eslint-plugin-import": "^2.29.0",
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
@@ -45,6 +45,7 @@
     "rimraf": "^5.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.5.0",
+    "typescript-eslint": "^8.0.0",
     "vitest": "^2.0.0"
   },
   "lint-staged": {

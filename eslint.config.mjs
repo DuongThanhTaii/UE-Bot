@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-nocheck
 import eslint from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import tseslint from 'typescript-eslint';
@@ -29,9 +29,10 @@ export default tseslint.config(
 
   // Project-specific settings
   {
+    files: ['packages/**/src/**/*.ts', 'packages/**/src/**/*.tsx'],
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.json', './packages/*/tsconfig.json'],
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },

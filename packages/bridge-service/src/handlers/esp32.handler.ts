@@ -1,7 +1,7 @@
+import type { Device, DeviceCommand, DeviceStatus } from '@ue-bot/shared';
 import { v4 as uuidv4 } from 'uuid';
 import type { WebSocket } from 'ws';
 
-import type { Device, DeviceCommand, DeviceStatus } from '@ue-bot/shared';
 import { logger } from '../utils/logger';
 
 interface ConnectedDevice {
@@ -10,8 +10,13 @@ interface ConnectedDevice {
   lastPing: number;
 }
 
+interface DeviceMessage {
+  type: string;
+  data: unknown;
+}
+
 export class ESP32Handler {
-  private devices: Map<string, ConnectedDevice> = new Map();
+  private devices = new Map<string, ConnectedDevice>();
   private pingInterval: NodeJS.Timeout | null = null;
 
   constructor() {
@@ -91,7 +96,7 @@ export class ESP32Handler {
 
   private handleMessage(deviceId: string, data: unknown): void {
     try {
-      const message = JSON.parse(data as string);
+      const message = JSON.parse(data as string) as DeviceMessage;
       logger.debug({ deviceId, message }, 'Received message from ESP32');
 
       switch (message.type) {
@@ -99,7 +104,7 @@ export class ESP32Handler {
           this.handleAudioData(deviceId, message.data);
           break;
         case 'status':
-          this.handleStatusUpdate(deviceId, message.data);
+          this.handleStatusUpdate(deviceId, message.data as Partial<Device>);
           break;
         case 'config':
           this.handleConfigUpdate(deviceId, message.data);

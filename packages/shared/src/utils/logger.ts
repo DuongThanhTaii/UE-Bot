@@ -19,7 +19,14 @@ const defaultConfig: LoggerConfig = {
   timestamps: true,
 };
 
-export function createLogger(config: Partial<LoggerConfig> = {}) {
+interface Logger {
+  debug: (message: string, ...args: unknown[]) => void;
+  info: (message: string, ...args: unknown[]) => void;
+  warn: (message: string, ...args: unknown[]) => void;
+  error: (message: string, ...args: unknown[]) => void;
+}
+
+export function createLogger(config: Partial<LoggerConfig> = {}): Logger {
   const cfg = { ...defaultConfig, ...config };
   const minLevel = LOG_LEVELS[cfg.level];
 
@@ -37,12 +44,14 @@ export function createLogger(config: Partial<LoggerConfig> = {}) {
   return {
     debug: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.debug >= minLevel) {
-        console.debug(formatMessage('debug', message), ...args);
+        // eslint-disable-next-line no-console
+        console.log(formatMessage('debug', message), ...args);
       }
     },
     info: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.info >= minLevel) {
-        console.info(formatMessage('info', message), ...args);
+        // eslint-disable-next-line no-console
+        console.log(formatMessage('info', message), ...args);
       }
     },
     warn: (message: string, ...args: unknown[]) => {
