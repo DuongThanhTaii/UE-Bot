@@ -1,0 +1,5 @@
+# Moltbot local config
+external/moltbot/.env
+external/moltbot/.env.local
+external/moltbot/node_modules/
+external/moltbot/dist/
