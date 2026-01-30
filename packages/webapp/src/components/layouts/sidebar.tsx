@@ -1,23 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Cpu,
-  Settings,
-  Bot,
-} from "lucide-react";
+import { Bot, Cpu, LayoutDashboard, MessageSquare, Settings } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/chat", label: "Chat", icon: MessageSquare },
-  { href: "/devices", label: "Devices", icon: Cpu },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/chat', label: 'Chat', icon: MessageSquare },
+  { href: '/devices', label: 'Devices', icon: Cpu },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Sidebar() {
@@ -35,8 +29,8 @@ export function Sidebar() {
         {navItems.map((item) => (
           <Button
             key={item.href}
-            variant={pathname === item.href ? "secondary" : "ghost"}
-            className={cn("w-full justify-start gap-2")}
+            variant={pathname === item.href ? 'secondary' : 'ghost'}
+            className={cn('w-full justify-start gap-2')}
             asChild
           >
             <Link href={item.href}>

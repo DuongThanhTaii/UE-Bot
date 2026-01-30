@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
+import type { NextFunction, Request, Response } from 'express';
+import { ZodError } from 'zod';
 
-import { logger } from "../utils/logger";
+import { logger } from '../utils/logger';
 
 export interface AppError extends Error {
   statusCode?: number;
@@ -12,14 +12,14 @@ export function errorMiddleware(
   err: AppError,
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ): void {
-  logger.error({ err }, "Unhandled error");
+  logger.error({ err }, 'Unhandled error');
 
   // Zod validation error
   if (err instanceof ZodError) {
     res.status(400).json({
-      error: "Validation error",
+      error: 'Validation error',
       details: err.errors,
     });
     return;
@@ -36,6 +36,6 @@ export function errorMiddleware(
 
   // Unknown error
   res.status(500).json({
-    error: "Internal server error",
+    error: 'Internal server error',
   });
 }

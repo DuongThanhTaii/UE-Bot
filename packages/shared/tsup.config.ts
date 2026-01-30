@@ -8,7 +8,10 @@ export default defineConfig({
     'constants/index': 'src/constants/index.ts',
   },
   format: ['cjs', 'esm'],
-  dts: true,
+  dts: {
+    resolve: true,
+  },
+  tsconfig: 'tsconfig.json',
   clean: true,
   sourcemap: true,
   splitting: false,
