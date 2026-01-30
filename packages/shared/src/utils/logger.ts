@@ -1,4 +1,4 @@
-type LogLevel = "debug" | "info" | "warn" | "error";
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 interface LoggerConfig {
   level: LogLevel;
@@ -14,8 +14,8 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 };
 
 const defaultConfig: LoggerConfig = {
-  level: "info",
-  prefix: "[UE-Bot]",
+  level: 'info',
+  prefix: '[UE-Bot]',
   timestamps: true,
 };
 
@@ -31,28 +31,28 @@ export function createLogger(config: Partial<LoggerConfig> = {}) {
     parts.push(cfg.prefix);
     parts.push(`[${level.toUpperCase()}]`);
     parts.push(message);
-    return parts.join(" ");
+    return parts.join(' ');
   };
 
   return {
     debug: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.debug >= minLevel) {
-        console.debug(formatMessage("debug", message), ...args);
+        console.debug(formatMessage('debug', message), ...args);
       }
     },
     info: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.info >= minLevel) {
-        console.info(formatMessage("info", message), ...args);
+        console.info(formatMessage('info', message), ...args);
       }
     },
     warn: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.warn >= minLevel) {
-        console.warn(formatMessage("warn", message), ...args);
+        console.warn(formatMessage('warn', message), ...args);
       }
     },
     error: (message: string, ...args: unknown[]) => {
       if (LOG_LEVELS.error >= minLevel) {
-        console.error(formatMessage("error", message), ...args);
+        console.error(formatMessage('error', message), ...args);
       }
     },
   };

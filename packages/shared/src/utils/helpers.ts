@@ -7,15 +7,15 @@ export function generateId(): string {
 }
 
 export function formatBytes(bytes: number, decimals = 2): string {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 export function formatDuration(ms: number): string {
@@ -38,14 +38,11 @@ export function clamp(value: number, min: number, max: number): number {
 
 export async function retry<T>(
   fn: () => Promise<T>,
-  options: { attempts?: number; delay?: number; backoff?: number } = {},
+  options: { attempts?: number; delay?: number; backoff?: number } = {}
 ): Promise<T> {
   const { attempts = 3, delay: baseDelay = 1000, backoff = 2 } = options;
 
-  const attempt = async (
-    attemptsLeft: number,
-    currentDelay: number,
-  ): Promise<T> => {
+  const attempt = async (attemptsLeft: number, currentDelay: number): Promise<T> => {
     try {
       return await fn();
     } catch (error) {

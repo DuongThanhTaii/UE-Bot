@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============ Interfaces ============
 export interface GatewayConfig {
@@ -36,16 +36,16 @@ export interface GatewayStatus {
 
 // WebSocket message types
 export type WSMessageType =
-  | "ping"
-  | "pong"
-  | "auth"
-  | "auth.success"
-  | "auth.error"
-  | "message"
-  | "message.ack"
-  | "session.create"
-  | "session.end"
-  | "error";
+  | 'ping'
+  | 'pong'
+  | 'auth'
+  | 'auth.success'
+  | 'auth.error'
+  | 'message'
+  | 'message.ack'
+  | 'session.create'
+  | 'session.end'
+  | 'error';
 
 // ============ Zod Schemas ============
 export const GatewayConfigSchema = z.object({

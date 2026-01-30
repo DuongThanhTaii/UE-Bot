@@ -6,7 +6,7 @@ export const DEVICE_CONSTANTS = {
   CONNECTION_TIMEOUT_MS: 10000,
 
   // Wake word
-  DEFAULT_WAKE_WORD: "hey bot",
+  DEFAULT_WAKE_WORD: 'hey bot',
   WAKE_WORD_SENSITIVITY: 0.5,
 
   // Audio

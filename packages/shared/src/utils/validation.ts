@@ -1,11 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import type { Result } from "../types/common";
+import type { Result } from '../types/common';
 
-export function validate<T>(
-  schema: z.ZodType<T>,
-  data: unknown,
-): Result<T, z.ZodError> {
+export function validate<T>(schema: z.ZodType<T>, data: unknown): Result<T, z.ZodError> {
   const result = schema.safeParse(data);
 
   if (result.success) {
@@ -20,8 +17,7 @@ export function assertValid<T>(schema: z.ZodType<T>, data: unknown): T {
 }
 
 export function isValidUUID(value: string): boolean {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(value);
 }
 

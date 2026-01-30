@@ -1,13 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import type { Timestamped } from "./common";
+import type { Timestamped } from './common';
 
 // ============ Enums ============
 export const DeviceStatus = {
-  ONLINE: "online",
-  OFFLINE: "offline",
-  ERROR: "error",
-  CONNECTING: "connecting",
+  ONLINE: 'online',
+  OFFLINE: 'offline',
+  ERROR: 'error',
+  CONNECTING: 'connecting',
 } as const;
 
 export type DeviceStatus = (typeof DeviceStatus)[keyof typeof DeviceStatus];
@@ -35,12 +35,12 @@ export interface Device extends Timestamped {
 
 export interface DeviceCommand {
   deviceId: string;
-  command: "start" | "stop" | "status" | "config" | "restart" | "ota";
+  command: 'start' | 'stop' | 'status' | 'config' | 'restart' | 'ota';
   payload?: Record<string, unknown>;
 }
 
 export interface DeviceEvent {
-  type: "connected" | "disconnected" | "error" | "audio" | "command";
+  type: 'connected' | 'disconnected' | 'error' | 'audio' | 'command';
   deviceId: string;
   timestamp: number;
   data?: unknown;
@@ -58,12 +58,12 @@ export const DeviceConfigSchema = z.object({
 
 export const DeviceCommandSchema = z.object({
   deviceId: z.string().uuid(),
-  command: z.enum(["start", "stop", "status", "config", "restart", "ota"]),
+  command: z.enum(['start', 'stop', 'status', 'config', 'restart', 'ota']),
   payload: z.record(z.unknown()).optional(),
 });
 
 export const DeviceEventSchema = z.object({
-  type: z.enum(["connected", "disconnected", "error", "audio", "command"]),
+  type: z.enum(['connected', 'disconnected', 'error', 'audio', 'command']),
   deviceId: z.string(),
   timestamp: z.number(),
   data: z.unknown().optional(),

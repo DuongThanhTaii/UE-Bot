@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============ Enums ============
 export const AudioEncoding = {
-  PCM: "pcm",
-  OPUS: "opus",
-  MP3: "mp3",
-  WAV: "wav",
+  PCM: 'pcm',
+  OPUS: 'opus',
+  MP3: 'mp3',
+  WAV: 'wav',
 } as const;
 
 export type AudioEncoding = (typeof AudioEncoding)[keyof typeof AudioEncoding];
@@ -67,7 +67,7 @@ export const AudioConfigSchema = z.object({
   sampleRate: z.number().int().positive(),
   bitDepth: z.number().int().positive(),
   channels: z.number().int().min(1).max(2),
-  encoding: z.enum(["pcm", "opus", "mp3", "wav"]),
+  encoding: z.enum(['pcm', 'opus', 'mp3', 'wav']),
 });
 
 export const TranscribeRequestSchema = z.object({

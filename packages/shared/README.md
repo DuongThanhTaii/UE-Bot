@@ -10,18 +10,18 @@ This is an internal package and is automatically available in the monorepo.
 
 ```typescript
 // Import types
-import type { Device, AudioConfig, GatewayMessage } from "@ue-bot/shared";
+import type { Device, AudioConfig, GatewayMessage } from '@ue-bot/shared';
 
 // Import utilities
-import { logger, validate, delay, retry } from "@ue-bot/shared";
+import { logger, validate, delay, retry } from '@ue-bot/shared';
 
 // Import constants
-import { AUDIO_CONSTANTS, DEVICE_CONSTANTS } from "@ue-bot/shared";
+import { AUDIO_CONSTANTS, DEVICE_CONSTANTS } from '@ue-bot/shared';
 
 // Or import from specific paths
-import type { Device } from "@ue-bot/shared/types";
-import { logger } from "@ue-bot/shared/utils";
-import { AUDIO_CONSTANTS } from "@ue-bot/shared/constants";
+import type { Device } from '@ue-bot/shared/types';
+import { logger } from '@ue-bot/shared/utils';
+import { AUDIO_CONSTANTS } from '@ue-bot/shared/constants';
 ```
 
 ## Structure
