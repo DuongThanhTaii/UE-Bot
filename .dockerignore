@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+.next
+out
+.turbo
+
+# Development
+.git
+.gitignore
+*.md
+!README.md
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Test
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ESP32 (not needed in container)
+packages/esp32-firmware

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # ===================
+  # Webapp (Development)
+  # ===================
+  webapp:
+    build:
+      context: .
+      dockerfile: packages/webapp/Dockerfile.dev
+    container_name: ue-bot-webapp-dev
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8080
+    volumes:
+      - ./packages/webapp:/app/packages/webapp
+      - ./packages/shared:/app/packages/shared
+      - /app/packages/webapp/node_modules
+      - /app/packages/webapp/.next
+    depends_on:
+      - bridge
+    networks:
+      - ue-bot-dev-network
+    command: pnpm --filter @ue-bot/webapp dev
+
+  # ===================
+  # Bridge Service (Development)
+  # ===================
+  bridge:
+    build:
+      context: .
+      dockerfile: packages/bridge-service/Dockerfile.dev
+    container_name: ue-bot-bridge-dev
+    ports:
+      - '8080:8080'
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - MOLTBOT_URL=http://moltbot:3001
+    env_file:
+      - .env.local
+    volumes:
+      - ./packages/bridge-service:/app/packages/bridge-service
+      - ./packages/shared:/app/packages/shared
+      - /app/packages/bridge-service/node_modules
+    networks:
+      - ue-bot-dev-network
+    command: pnpm --filter @ue-bot/bridge-service dev
+
+  # ===================
+  # Redis (Development)
+  # ===================
+  redis:
+    image: redis:7-alpine
+    container_name: ue-bot-redis-dev
+    ports:
+      - '6379:6379'
+    networks:
+      - ue-bot-dev-network
+
+networks:
+  ue-bot-dev-network:
+    driver: bridge
