@@ -3,14 +3,13 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "composite": true,
+    "composite": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@ue-bot/shared": ["../shared/src"]
-    },
-    "module": "CommonJS"
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
