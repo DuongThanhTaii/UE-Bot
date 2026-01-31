@@ -56,13 +56,13 @@ export class ReadTool extends BaseTool {
     startLine: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .optional()
       .describe('Start reading from this line (1-indexed)'),
     endLine: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .optional()
       .describe('Stop reading at this line (1-indexed, inclusive)'),
   });
@@ -229,7 +229,7 @@ export class ListTool extends BaseTool {
   parameters = z.object({
     path: z.string().default('.').describe('Directory path to list'),
     recursive: z.boolean().default(false).describe('List recursively'),
-    maxDepth: z.number().int().positive().default(3).describe('Maximum recursion depth'),
+    maxDepth: z.number().int().min(1).default(3).describe('Maximum recursion depth'),
     includeHidden: z.boolean().default(false).describe('Include hidden files (starting with .)'),
   });
 
@@ -424,7 +424,7 @@ export class SearchTool extends BaseTool {
       .array(z.string())
       .optional()
       .describe('File extensions to include (e.g., [".ts", ".js"])'),
-    maxResults: z.number().int().positive().default(50).describe('Maximum number of results'),
+    maxResults: z.number().int().min(1).default(50).describe('Maximum number of results'),
     regex: z.boolean().default(false).describe('Treat query as regex'),
     caseSensitive: z.boolean().default(false).describe('Case sensitive search'),
   });

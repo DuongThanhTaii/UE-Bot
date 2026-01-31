@@ -62,12 +62,17 @@ export function createAgent(config: AgentCoreConfig): {
     model: config.model || 'llama-3.3-70b-versatile',
   });
 
-  // Initialize memory store
-  const dataDir = process.env['DATA_DIR'] || path.join(os.homedir(), '.ue-bot', 'data');
-  const memoryStore = new SQLiteMemoryStore({
-    dbPath: path.join(dataDir, 'memory.db'),
-  });
-  setMemoryStore(memoryStore);
+  // Initialize memory store (try SQLite, fallback to in-memory)
+  try {
+    const dataDir = process.env['DATA_DIR'] || path.join(os.homedir(), '.ue-bot', 'data');
+    const memoryStore = new SQLiteMemoryStore({
+      dbPath: path.join(dataDir, 'memory.db'),
+    });
+    setMemoryStore(memoryStore);
+  } catch {
+    console.warn('⚠️  SQLite memory unavailable, using in-memory store');
+    // Memory tools will work with default in-memory store
+  }
 
   // Initialize tool registry with all tools
   const registry = new ToolRegistry();

@@ -260,8 +260,8 @@ export class ScreenshotTool extends BaseTool {
 
   parameters = z.object({
     url: z.string().url().describe('URL to screenshot'),
-    width: z.number().int().positive().default(1280).describe('Viewport width'),
-    height: z.number().int().positive().default(720).describe('Viewport height'),
+    width: z.number().int().min(1).default(1280).describe('Viewport width'),
+    height: z.number().int().min(1).default(720).describe('Viewport height'),
     fullPage: z.boolean().default(false).describe('Capture full scrollable page'),
   });
 
@@ -295,7 +295,7 @@ export class ApiRequestTool extends BaseTool {
       .describe('HTTP method'),
     headers: z.record(z.string()).optional().describe('Request headers'),
     body: z.string().optional().describe('Request body (for POST/PUT/PATCH)'),
-    timeout: z.number().int().positive().default(30000).describe('Request timeout in milliseconds'),
+    timeout: z.number().int().min(1).default(30000).describe('Request timeout in milliseconds'),
   });
 
   protected async execute(
@@ -303,11 +303,15 @@ export class ApiRequestTool extends BaseTool {
     context: ToolContext
   ): Promise<ApiResponse> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => { controller.abort(); }, params.timeout);
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, params.timeout);
 
     // Use context abort signal if available
     if (context.abortSignal) {
-      context.abortSignal.addEventListener('abort', () => { controller.abort(); });
+      context.abortSignal.addEventListener('abort', () => {
+        controller.abort();
+      });
     }
 
     try {

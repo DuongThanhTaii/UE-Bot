@@ -46,7 +46,7 @@ export class ExecTool extends BaseTool {
     timeout: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .default(30000)
       .describe('Timeout in milliseconds (default: 30s)'),
     env: z.record(z.string()).optional().describe('Additional environment variables'),
@@ -125,7 +125,7 @@ export class BashTool extends BaseTool {
     timeout: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .default(60000)
       .describe('Timeout in milliseconds (default: 60s)'),
   });
@@ -375,7 +375,7 @@ export class NodeTool extends BaseTool {
 
   parameters = z.object({
     code: z.string().describe('JavaScript/TypeScript code to execute'),
-    timeout: z.number().int().positive().default(30000).describe('Timeout in milliseconds'),
+    timeout: z.number().int().min(1).default(30000).describe('Timeout in milliseconds'),
   });
 
   protected async execute(
