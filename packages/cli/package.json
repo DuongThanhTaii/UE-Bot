@@ -1,0 +1,40 @@
+{
+  "name": "@ue-bot/cli",
+  "version": "0.1.0",
+  "description": "CLI interface for UE-Bot AI Agent",
+  "type": "module",
+  "bin": {
+    "ue-bot": "./dist/index.js",
+    "ub": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ignore-pattern '**/*.test.ts'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ue-bot/shared": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "conf": "^13.0.1",
+    "groq-sdk": "^0.8.0",
+    "inquirer": "^9.3.7",
+    "marked": "^12.0.2",
+    "marked-terminal": "^7.1.0",
+    "ora": "^8.1.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.10.7",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "keywords": ["ai", "cli", "agent", "groq", "llm"],
+  "author": "UE-Bot Team",
+  "license": "MIT"
+}
