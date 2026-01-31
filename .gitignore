@@ -48,6 +48,9 @@ packages/esp32-firmware/__pycache__/
 
 # Misc
 *.bak
+
+# Task documentation (internal development only)
+tasks/
 *.tmp
 *.temp
 
