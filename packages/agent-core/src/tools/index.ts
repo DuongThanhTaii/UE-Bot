@@ -12,3 +12,4 @@ export * from './fs';
 export * from './memory';
 export * from './runtime';
 export * from './web';
+export * from './open';
