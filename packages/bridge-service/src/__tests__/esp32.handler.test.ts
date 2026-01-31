@@ -4,7 +4,7 @@
 
 import { createServer, Server as HttpServer } from 'http';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import WebSocket from 'ws';
+import * as WebSocket from 'ws';
 import { ESP32Handler } from '../handlers/esp32.handler';
 import {
   BINARY_HEADER_SIZE,
@@ -273,7 +273,7 @@ describe('ESP32Handler', () => {
 
       // Use try-catch since device may not be fully registered
       try {
-        await esp32Handler.sendCommand(deviceId, 'led_control', { color: 'blue' });
+        esp32Handler.sendCommand({ deviceId, command: 'status', payload: { color: 'blue' } });
       } catch {
         // Expected if device not fully connected
       }

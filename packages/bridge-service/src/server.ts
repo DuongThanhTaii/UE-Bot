@@ -62,7 +62,7 @@ export class Server {
       try {
         const readiness = await this.healthService.checkReadiness();
         res.status(readiness.ready ? 200 : 503).json(readiness);
-      } catch (error) {
+      } catch (_error) {
         res.status(503).json({ ready: false, error: 'Health check failed' });
       }
     });
