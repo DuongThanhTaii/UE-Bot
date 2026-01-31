@@ -29,12 +29,19 @@
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
+    "@types/marked-terminal": "^6.1.1",
     "@types/node": "^22.10.7",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
-  "keywords": ["ai", "cli", "agent", "groq", "llm"],
+  "keywords": [
+    "ai",
+    "cli",
+    "agent",
+    "groq",
+    "llm"
+  ],
   "author": "UE-Bot Team",
   "license": "MIT"
 }

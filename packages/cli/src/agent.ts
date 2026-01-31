@@ -102,12 +102,14 @@ export class Agent {
             callbacks.onToken(delta);
           }
 
-          // Get usage from final chunk
-          if (chunk.usage) {
+          // Get usage from final chunk (if available in x_groq extension)
+          // Streaming chunks don't include standard usage, only available via x_groq
+          const xGroq = chunk as unknown as { x_groq?: { usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number } } };
+          if (xGroq.x_groq?.usage) {
             usage = {
-              promptTokens: chunk.usage.prompt_tokens,
-              completionTokens: chunk.usage.completion_tokens,
-              totalTokens: chunk.usage.total_tokens,
+              promptTokens: xGroq.x_groq.usage.prompt_tokens ?? 0,
+              completionTokens: xGroq.x_groq.usage.completion_tokens ?? 0,
+              totalTokens: xGroq.x_groq.usage.total_tokens ?? 0,
             };
           }
         }

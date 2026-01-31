@@ -133,7 +133,7 @@ async function handleCommand(
   rl: ReturnType<typeof createInterface>,
   _options: ChatOptions
 ): Promise<void> {
-  const [command, ...args] = cmd.slice(1).split(' ');
+  const [command = '', ...args] = cmd.slice(1).split(' ');
 
   switch (command.toLowerCase()) {
     case 'help':

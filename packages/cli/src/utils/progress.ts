@@ -44,7 +44,7 @@ export function info(message: string): void {
  * Print debug message (only if DEBUG is set)
  */
 export function debug(message: string): void {
-  if (process.env.DEBUG || process.env.UE_BOT_DEBUG) {
+  if (process.env['DEBUG'] || process.env['UE_BOT_DEBUG']) {
     console.log(chalk.gray('[DEBUG]') + ' ' + message);
   }
 }

@@ -11,14 +11,21 @@ const config = new Conf<CLIConfig>({
 });
 
 /**
+ * Get environment variable safely
+ */
+function getEnv(key: string): string | undefined {
+  return process.env[key];
+}
+
+/**
  * Get full configuration (with env var overrides)
  */
 export function getConfig(): CLIConfig {
   return {
     ...config.store,
-    groqApiKey: process.env.GROQ_API_KEY || config.get('groqApiKey'),
-    openaiApiKey: process.env.OPENAI_API_KEY || config.get('openaiApiKey'),
-    braveApiKey: process.env.BRAVE_API_KEY || config.get('braveApiKey'),
+    groqApiKey: getEnv('GROQ_API_KEY') || config.get('groqApiKey'),
+    openaiApiKey: getEnv('OPENAI_API_KEY') || config.get('openaiApiKey'),
+    braveApiKey: getEnv('BRAVE_API_KEY') || config.get('braveApiKey'),
   };
 }
 
@@ -27,13 +34,13 @@ export function getConfig(): CLIConfig {
  */
 export function getConfigValue<K extends keyof CLIConfig>(key: K): CLIConfig[K] {
   if (key === 'groqApiKey') {
-    return (process.env.GROQ_API_KEY || config.get(key)) as CLIConfig[K];
+    return (getEnv('GROQ_API_KEY') || config.get(key)) as CLIConfig[K];
   }
   if (key === 'openaiApiKey') {
-    return (process.env.OPENAI_API_KEY || config.get(key)) as CLIConfig[K];
+    return (getEnv('OPENAI_API_KEY') || config.get(key)) as CLIConfig[K];
   }
   if (key === 'braveApiKey') {
-    return (process.env.BRAVE_API_KEY || config.get(key)) as CLIConfig[K];
+    return (getEnv('BRAVE_API_KEY') || config.get(key)) as CLIConfig[K];
   }
   return config.get(key);
 }

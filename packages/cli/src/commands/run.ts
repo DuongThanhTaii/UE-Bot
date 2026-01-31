@@ -120,7 +120,12 @@ async function executePrompt(prompt: string | undefined, options: RunOptions): P
     let result = '';
 
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => { reject(new Error('Timeout')); }, parseInt(options.timeout, 10));
+      setTimeout(
+        () => {
+          reject(new Error('Timeout'));
+        },
+        parseInt(options.timeout, 10)
+      );
     });
 
     const chatPromise = agent.chat(finalPrompt, {

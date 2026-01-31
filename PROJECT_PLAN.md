@@ -23,9 +23,9 @@
 
 - [x] WebChat hoạt động qua custom website
 - [x] Telegram Bot hoạt động
-- [ ] **AI Agent có thể gọi tools (function calling)**
-- [ ] **Agent tự động thực hiện multi-step tasks**
-- [ ] CLI interface hoạt động
+- [x] **AI Agent có thể gọi tools (function calling)**
+- [x] **Agent tự động thực hiện multi-step tasks**
+- [x] CLI interface hoạt động
 - [ ] ESP32 có thể gửi voice commands
 - [ ] Latency voice command < 3 giây
 - [ ] System uptime > 99%
@@ -37,9 +37,9 @@
 ```
 Phase 1: Foundation            │██████████│ Week 1-2   ✅ COMPLETED
 Phase 2: Basic Integration     │██████████│ Week 3-4   ✅ COMPLETED (Direct Groq)
-Phase 3: AI AGENT CORE         │███████████████│ Week 5-8   🔲 NOT STARTED ← CURRENT
-Phase 4: CLI Interface         │█████│ Week 9      🔲 NOT STARTED
-Phase 5: ESP32 Development     │██████████│ Week 10-11 🔲 BLOCKED (waiting hardware)
+Phase 3: AI AGENT CORE         │███████████████│ Week 5-8   ✅ COMPLETED
+Phase 4: CLI Interface         │█████│ Week 9      ✅ COMPLETED
+Phase 5: ESP32 Development     │██████████│ Week 10-11 🔲 BLOCKED (waiting hardware) ← CURRENT
 Phase 6: Voice Integration     │█████│ Week 12     🔲 NOT STARTED
 Phase 7: Testing & Polish      │█████│ Week 13     🔲 NOT STARTED
 Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTED
@@ -121,7 +121,7 @@ Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTE
 
 ---
 
-## 📦 PHASE 3: AI AGENT CORE (Week 5-8) 🔲 NOT STARTED
+## 📦 PHASE 3: AI AGENT CORE (Week 5-8) ✅ COMPLETED
 
 ### Objectives
 
@@ -140,20 +140,20 @@ Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTE
 
 | ID   | Task                                   | Priority | Est. Hours | Status |
 | ---- | -------------------------------------- | -------- | ---------- | ------ |
-| T025 | Design Agent Architecture              | High     | 4h         | 🔲     |
-| T026 | Implement Function Calling (Groq)      | High     | 8h         | 🔲     |
-| T027 | Create Tool Registry System            | High     | 6h         | 🔲     |
-| T028 | Implement File Tools (read/write/edit) | High     | 8h         | 🔲     |
-| T029 | Implement Exec Tools (bash/process)    | High     | 8h         | 🔲     |
-| T030 | Implement Web Tools (search/fetch)     | Medium   | 6h         | 🔲     |
-| T031 | Implement Memory System                | Medium   | 8h         | 🔲     |
-| T032 | Create Agent Execution Loop            | High     | 10h        | 🔲     |
-| T033 | Add Streaming Support                  | Medium   | 6h         | 🔲     |
-| T034 | Implement Session Management           | Medium   | 6h         | 🔲     |
-| T035 | Update Chat UI for Agent Actions       | High     | 8h         | 🔲     |
-| T036 | Add Tool Approval Flow                 | Medium   | 4h         | 🔲     |
-| T037 | Create Agent API Endpoints             | High     | 6h         | 🔲     |
-| T038 | Implement Error Recovery               | Medium   | 4h         | 🔲     |
+| T025 | Design Agent Architecture              | High     | 4h         | ✅     |
+| T026 | Implement Function Calling (Groq)      | High     | 8h         | ✅     |
+| T027 | Create Tool Registry System            | High     | 6h         | ✅     |
+| T028 | Implement File Tools (read/write/edit) | High     | 8h         | ✅     |
+| T029 | Implement Exec Tools (bash/process)    | High     | 8h         | ✅     |
+| T030 | Implement Web Tools (search/fetch)     | Medium   | 6h         | ✅     |
+| T031 | Implement Memory System                | Medium   | 8h         | ✅     |
+| T032 | Create Agent Execution Loop            | High     | 10h        | ✅     |
+| T033 | Add Streaming Support                  | Medium   | 6h         | ✅     |
+| T034 | Implement Session Management           | Medium   | 6h         | ✅     |
+| T035 | Update Chat UI for Agent Actions       | High     | 8h         | ✅     |
+| T036 | Add Tool Approval Flow                 | Medium   | 4h         | ✅     |
+| T037 | Create Agent API Endpoints             | High     | 6h         | ✅     |
+| T038 | Implement Error Recovery               | Medium   | 4h         | ✅     |
 | T039 | Write Agent Tests                      | Medium   | 6h         | 🔲     |
 
 ### Tool Groups to Implement (like OpenClaw)
@@ -168,17 +168,17 @@ Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTE
 
 ### Deliverables
 
-- [ ] Agent can use function calling
-- [ ] File tools working (read/write/edit)
-- [ ] Exec tools working (run commands)
-- [ ] Web tools working (search/fetch)
-- [ ] Memory system functional
-- [ ] Agent execution loop stable
-- [ ] UI shows tool calls and results
+- [x] Agent can use function calling
+- [x] File tools working (read/write/edit)
+- [x] Exec tools working (run commands)
+- [x] Web tools working (search/fetch)
+- [x] Memory system functional
+- [x] Agent execution loop stable
+- [x] UI shows tool calls and results
 
 ---
 
-## 📦 PHASE 4: CLI INTERFACE (Week 9) 🔲 NOT STARTED
+## 📦 PHASE 4: CLI INTERFACE (Week 9) ✅ COMPLETED
 
 ### Objectives
 
@@ -190,25 +190,25 @@ Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTE
 
 | ID   | Task                          | Priority | Est. Hours | Status |
 | ---- | ----------------------------- | -------- | ---------- | ------ |
-| T040 | Setup CLI package             | High     | 2h         | 🔲     |
-| T041 | Implement interactive mode    | High     | 6h         | 🔲     |
-| T042 | Implement single-command mode | High     | 4h         | 🔲     |
-| T043 | Add pipe support              | Medium   | 4h         | 🔲     |
-| T044 | Add configuration options     | Medium   | 3h         | 🔲     |
-| T045 | Implement output formatting   | Low      | 3h         | 🔲     |
-| T046 | Write CLI documentation       | Medium   | 2h         | 🔲     |
+| T040 | Setup CLI package             | High     | 2h         | ✅     |
+| T041 | Implement interactive mode    | High     | 6h         | ✅     |
+| T042 | Implement single-command mode | High     | 4h         | ✅     |
+| T043 | Add pipe support              | Medium   | 4h         | ✅     |
+| T044 | Add configuration options     | Medium   | 3h         | ✅     |
+| T045 | Implement output formatting   | Low      | 3h         | ✅     |
+| T046 | Write CLI documentation       | Medium   | 2h         | ✅     |
 
 ### Deliverables
 
-- [ ] CLI package working
-- [ ] Interactive chat mode
-- [ ] Single command execution
-- [ ] Pipe input support
-- [ ] CLI documentation complete
+- [x] CLI package working
+- [x] Interactive chat mode
+- [x] Single command execution
+- [x] Pipe input support
+- [x] CLI documentation complete
 
 ---
 
-## 📦 PHASE 5: ESP32 DEVELOPMENT (Week 10-11) 🔲 BLOCKED
+## 📦 PHASE 5: ESP32 DEVELOPMENT (Week 10-11) 🔲 BLOCKED ← CURRENT
 
 ### Objectives
 
