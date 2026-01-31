@@ -13,15 +13,19 @@
 
 ### Primary Goals
 
-1. ✅ Clone Moltbot và giữ nguyên toàn bộ tính năng
-2. ✅ Xây dựng custom web dashboard (Direct Groq API)
-3. 🔲 Tích hợp ESP32 voice control
-4. 🔲 Deploy production-ready system
+1. ✅ Xây dựng custom web dashboard (Direct Groq API)
+2. 🔲 **Clone OpenClaw/ClawdBot AI Agent System**
+3. 🔲 Thêm CLI interface
+4. 🔲 Tích hợp ESP32 voice control
+5. 🔲 Deploy production-ready system
 
 ### Success Metrics
 
-- [x] Moltbot Gateway chạy ổn định (Bypassed - dùng Direct Groq)
 - [x] WebChat hoạt động qua custom website
+- [x] Telegram Bot hoạt động
+- [ ] **AI Agent có thể gọi tools (function calling)**
+- [ ] **Agent tự động thực hiện multi-step tasks**
+- [ ] CLI interface hoạt động
 - [ ] ESP32 có thể gửi voice commands
 - [ ] Latency voice command < 3 giây
 - [ ] System uptime > 99%
@@ -31,13 +35,14 @@
 ## 📅 Timeline Overview
 
 ```
-Phase 1: Foundation          │██████████│ Week 1-2   ✅ COMPLETED
-Phase 2: Core Integration    │██████████│ Week 3-4   ✅ COMPLETED (Direct Groq)
-Phase 3: ESP32 Development   │███████████████│ Week 5-7   🔄 IN PROGRESS
-Phase 4: Bridge Service      │██████████│ Week 8-9   (Mar 19 - Apr 1)
-Phase 5: Custom Skills       │██████████│ Week 10-11 (Apr 2 - Apr 15)
-Phase 6: Testing & Polish    │█████│ Week 12    (Apr 16 - Apr 22)
-Phase 7: Deployment          │██████████│ Week 13-14 (Apr 23 - Apr 30)
+Phase 1: Foundation            │██████████│ Week 1-2   ✅ COMPLETED
+Phase 2: Basic Integration     │██████████│ Week 3-4   ✅ COMPLETED (Direct Groq)
+Phase 3: AI AGENT CORE         │███████████████│ Week 5-8   🔲 NOT STARTED ← CURRENT
+Phase 4: CLI Interface         │█████│ Week 9      🔲 NOT STARTED
+Phase 5: ESP32 Development     │██████████│ Week 10-11 🔲 BLOCKED (waiting hardware)
+Phase 6: Voice Integration     │█████│ Week 12     🔲 NOT STARTED
+Phase 7: Testing & Polish      │█████│ Week 13     🔲 NOT STARTED
+Phase 8: Deployment            │█████│ Week 14     🔲 NOT STARTED
 ```
 
 ---
@@ -77,13 +82,13 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ---
 
-## 📦 PHASE 2: CORE INTEGRATION (Week 3-4) ✅ COMPLETED
+## 📦 PHASE 2: BASIC INTEGRATION (Week 3-4) ✅ COMPLETED
 
 ### Objectives
 
-- ~~Integrate Moltbot Gateway~~ → Direct Groq API (Bypass OpenClaw)
-- Setup basic WebChat
-- Configure channels
+- Setup basic WebChat with Direct Groq API
+- Configure Telegram Bot
+- Build dashboard UI
 
 ### Notes
 
@@ -116,7 +121,94 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ---
 
-## 📦 PHASE 3: ESP32 DEVELOPMENT (Week 5-7) 🔄 IN PROGRESS
+## 📦 PHASE 3: AI AGENT CORE (Week 5-8) 🔲 NOT STARTED
+
+### Objectives
+
+- **Clone OpenClaw/ClawdBot Agent capabilities**
+- Implement Function Calling with Groq
+- Build Tool System (file, exec, web, memory)
+- Create Agent Execution Loop
+
+### Notes
+
+> **Target**: Tạo AI Agent có thể tự động thực hiện multi-step tasks như ClawdBot/OpenClaw.
+> Sử dụng Groq API với function calling để gọi các tools.
+> Reference: https://docs.openclaw.ai/
+
+### Tasks
+
+| ID   | Task                                   | Priority | Est. Hours | Status |
+| ---- | -------------------------------------- | -------- | ---------- | ------ |
+| T025 | Design Agent Architecture              | High     | 4h         | 🔲     |
+| T026 | Implement Function Calling (Groq)      | High     | 8h         | 🔲     |
+| T027 | Create Tool Registry System            | High     | 6h         | 🔲     |
+| T028 | Implement File Tools (read/write/edit) | High     | 8h         | 🔲     |
+| T029 | Implement Exec Tools (bash/process)    | High     | 8h         | 🔲     |
+| T030 | Implement Web Tools (search/fetch)     | Medium   | 6h         | 🔲     |
+| T031 | Implement Memory System                | Medium   | 8h         | 🔲     |
+| T032 | Create Agent Execution Loop            | High     | 10h        | 🔲     |
+| T033 | Add Streaming Support                  | Medium   | 6h         | 🔲     |
+| T034 | Implement Session Management           | Medium   | 6h         | 🔲     |
+| T035 | Update Chat UI for Agent Actions       | High     | 8h         | 🔲     |
+| T036 | Add Tool Approval Flow                 | Medium   | 4h         | 🔲     |
+| T037 | Create Agent API Endpoints             | High     | 6h         | 🔲     |
+| T038 | Implement Error Recovery               | Medium   | 4h         | 🔲     |
+| T039 | Write Agent Tests                      | Medium   | 6h         | 🔲     |
+
+### Tool Groups to Implement (like OpenClaw)
+
+| Group            | Tools                             | Description             |
+| ---------------- | --------------------------------- | ----------------------- |
+| `group:fs`       | `read`, `write`, `edit`, `list`   | File system operations  |
+| `group:runtime`  | `exec`, `bash`, `process`         | Shell command execution |
+| `group:web`      | `web_search`, `web_fetch`         | Web search and scraping |
+| `group:memory`   | `memory_save`, `memory_search`    | Long-term memory        |
+| `group:sessions` | `session_list`, `session_history` | Conversation sessions   |
+
+### Deliverables
+
+- [ ] Agent can use function calling
+- [ ] File tools working (read/write/edit)
+- [ ] Exec tools working (run commands)
+- [ ] Web tools working (search/fetch)
+- [ ] Memory system functional
+- [ ] Agent execution loop stable
+- [ ] UI shows tool calls and results
+
+---
+
+## 📦 PHASE 4: CLI INTERFACE (Week 9) 🔲 NOT STARTED
+
+### Objectives
+
+- Build command-line interface for Agent
+- Support interactive and single-command modes
+- Pipe input/output support
+
+### Tasks
+
+| ID   | Task                          | Priority | Est. Hours | Status |
+| ---- | ----------------------------- | -------- | ---------- | ------ |
+| T040 | Setup CLI package             | High     | 2h         | 🔲     |
+| T041 | Implement interactive mode    | High     | 6h         | 🔲     |
+| T042 | Implement single-command mode | High     | 4h         | 🔲     |
+| T043 | Add pipe support              | Medium   | 4h         | 🔲     |
+| T044 | Add configuration options     | Medium   | 3h         | 🔲     |
+| T045 | Implement output formatting   | Low      | 3h         | 🔲     |
+| T046 | Write CLI documentation       | Medium   | 2h         | 🔲     |
+
+### Deliverables
+
+- [ ] CLI package working
+- [ ] Interactive chat mode
+- [ ] Single command execution
+- [ ] Pipe input support
+- [ ] CLI documentation complete
+
+---
+
+## 📦 PHASE 5: ESP32 DEVELOPMENT (Week 10-11) 🔲 BLOCKED
 
 ### Objectives
 
@@ -127,25 +219,25 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ### Notes
 
-> Hardware đang được mua: ESP32-S3, INMP441 mic, MAX98357A speaker, motors, sensors.
-> Protocol và handler đã được thiết kế và test.
+> **BLOCKED**: Đang chờ mua hardware (ESP32-S3, INMP441 mic, MAX98357A speaker).
+> Task documentation đã được tạo sẵn trong thư mục `tasks/`.
 
 ### Tasks
 
 | ID   | Task                          | Priority | Est. Hours | Status |
 | ---- | ----------------------------- | -------- | ---------- | ------ |
-| T024 | Setup PlatformIO project      | High     | 2h         | ✅     |
-| T025 | Implement WiFi manager        | High     | 4h         | 🔲     |
-| T026 | Configure I2S microphone      | High     | 6h         | 🔲     |
-| T027 | Configure I2S speaker         | High     | 4h         | 🔲     |
-| T028 | Implement audio buffer        | High     | 6h         | 🔲     |
-| T029 | Create WebSocket client       | High     | 8h         | 🔲     |
-| T030 | Implement wake word detection | High     | 12h        | 🔲     |
-| T031 | Add LED status indicators     | Low      | 2h         | 🔲     |
-| T032 | Implement button controls     | Medium   | 3h         | 🔲     |
-| T033 | Create OTA update system      | Medium   | 6h         | 🔲     |
-| T034 | Write hardware tests          | Medium   | 4h         | 🔲     |
-| T035 | Document hardware setup       | High     | 3h         | 🔲     |
+| T047 | Setup PlatformIO project      | High     | 2h         | ✅     |
+| T048 | Implement WiFi manager        | High     | 4h         | 🔲     |
+| T049 | Configure I2S microphone      | High     | 6h         | 🔲     |
+| T050 | Configure I2S speaker         | High     | 4h         | 🔲     |
+| T051 | Implement audio buffer        | High     | 6h         | 🔲     |
+| T052 | Create WebSocket client       | High     | 8h         | 🔲     |
+| T053 | Implement wake word detection | High     | 12h        | 🔲     |
+| T054 | Add LED status indicators     | Low      | 2h         | 🔲     |
+| T055 | Implement button controls     | Medium   | 3h         | 🔲     |
+| T056 | Create OTA update system      | Medium   | 6h         | 🔲     |
+| T057 | Write hardware tests          | Medium   | 4h         | 🔲     |
+| T058 | Document hardware setup       | High     | 3h         | 🔲     |
 
 ### Deliverables
 
@@ -157,70 +249,37 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ---
 
-## 📦 PHASE 4: BRIDGE SERVICE (Week 8-9)
+## 📦 PHASE 6: VOICE INTEGRATION (Week 12) 🔲 NOT STARTED
 
 ### Objectives
 
-- Build ESP32-Gateway bridge
-- Implement STT service
-- Implement TTS service
-- Device management
+- Integrate ESP32 with Agent system
+- Implement STT (Speech-to-Text)
+- Implement TTS (Text-to-Speech)
+- Voice command flow
 
 ### Tasks
 
-| ID   | Task                      | Priority | Est. Hours | Status |
-| ---- | ------------------------- | -------- | ---------- | ------ |
-| T036 | Create bridge server      | High     | 4h         | 🔲     |
-| T037 | Implement ESP32 handler   | High     | 6h         | 🔲     |
-| T038 | Implement Gateway handler | High     | 6h         | 🔲     |
-| T039 | Create audio processor    | High     | 8h         | 🔲     |
-| T040 | Integrate Whisper STT     | High     | 6h         | 🔲     |
-| T041 | Integrate ElevenLabs TTS  | High     | 4h         | 🔲     |
-| T042 | Implement device registry | Medium   | 4h         | 🔲     |
-| T043 | Add device authentication | High     | 4h         | 🔲     |
-| T044 | Create admin API          | Medium   | 4h         | 🔲     |
-| T045 | Write unit tests          | Medium   | 4h         | 🔲     |
-| T046 | Add logging & monitoring  | Medium   | 3h         | 🔲     |
+| ID   | Task                              | Priority | Est. Hours | Status |
+| ---- | --------------------------------- | -------- | ---------- | ------ |
+| T059 | Create Bridge Service             | High     | 6h         | 🔲     |
+| T060 | Implement ESP32 WebSocket handler | High     | 6h         | 🔲     |
+| T061 | Integrate Whisper STT             | High     | 6h         | 🔲     |
+| T062 | Integrate TTS (ElevenLabs/Edge)   | High     | 4h         | 🔲     |
+| T063 | Connect voice to Agent            | High     | 6h         | 🔲     |
+| T064 | Implement voice feedback          | Medium   | 4h         | 🔲     |
+| T065 | Add device management             | Medium   | 4h         | 🔲     |
 
 ### Deliverables
 
-- [ ] Bridge service operational
-- [ ] STT working with Whisper
-- [ ] TTS working with ElevenLabs
-- [ ] Device management functional
+- [ ] ESP32 connects to Agent
+- [ ] STT working
+- [ ] TTS working
+- [ ] Voice commands execute Agent tasks
 
 ---
 
-## 📦 PHASE 5: CUSTOM SKILLS (Week 10-11)
-
-### Objectives
-
-- Create ESP32 voice skill
-- Build home automation skills
-- Integrate with Moltbot skill system
-
-### Tasks
-
-| ID   | Task                          | Priority | Est. Hours | Status |
-| ---- | ----------------------------- | -------- | ---------- | ------ |
-| T047 | Create esp32-voice skill      | High     | 8h         | 🔲     |
-| T048 | Create device-control skill   | High     | 6h         | 🔲     |
-| T049 | Create status-report skill    | Medium   | 4h         | 🔲     |
-| T050 | Register skills with ClawdHub | Low      | 2h         | 🔲     |
-| T051 | Add skill management UI       | Medium   | 6h         | 🔲     |
-| T052 | Implement skill testing       | Medium   | 4h         | 🔲     |
-| T053 | Write skill documentation     | High     | 4h         | 🔲     |
-
-### Deliverables
-
-- [ ] ESP32 voice skill working
-- [ ] Device control functional
-- [ ] Skills integrated with Moltbot
-- [ ] Skill documentation complete
-
----
-
-## 📦 PHASE 6: TESTING & POLISH (Week 12)
+## 📦 PHASE 7: TESTING & POLISH (Week 13) 🔲 NOT STARTED
 
 ### Objectives
 
@@ -233,13 +292,13 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 | ID   | Task                 | Priority | Est. Hours | Status |
 | ---- | -------------------- | -------- | ---------- | ------ |
-| T054 | End-to-end testing   | High     | 8h         | 🔲     |
-| T055 | Performance testing  | High     | 4h         | 🔲     |
-| T056 | Latency optimization | High     | 6h         | 🔲     |
-| T057 | Fix critical bugs    | High     | 8h         | 🔲     |
-| T058 | UI/UX improvements   | Medium   | 6h         | 🔲     |
-| T059 | Security audit       | High     | 4h         | 🔲     |
-| T060 | Update documentation | Medium   | 4h         | 🔲     |
+| T066 | End-to-end testing   | High     | 8h         | 🔲     |
+| T067 | Performance testing  | High     | 4h         | 🔲     |
+| T068 | Latency optimization | High     | 6h         | 🔲     |
+| T069 | Fix critical bugs    | High     | 8h         | 🔲     |
+| T070 | UI/UX improvements   | Medium   | 6h         | 🔲     |
+| T071 | Security audit       | High     | 4h         | 🔲     |
+| T072 | Update documentation | Medium   | 4h         | 🔲     |
 
 ### Deliverables
 
@@ -250,7 +309,7 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ---
 
-## 📦 PHASE 7: DEPLOYMENT (Week 13-14)
+## 📦 PHASE 8: DEPLOYMENT (Week 14) 🔲 NOT STARTED
 
 ### Objectives
 
@@ -263,16 +322,16 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 | ID   | Task                        | Priority | Est. Hours | Status |
 | ---- | --------------------------- | -------- | ---------- | ------ |
-| T061 | Setup production server     | High     | 4h         | 🔲     |
-| T062 | Configure Docker production | High     | 4h         | 🔲     |
-| T063 | Setup SSL/TLS               | High     | 2h         | 🔲     |
-| T064 | Configure monitoring        | High     | 4h         | 🔲     |
-| T065 | Setup alerting              | Medium   | 2h         | 🔲     |
-| T066 | Create user guide           | High     | 6h         | 🔲     |
-| T067 | Create video tutorials      | Low      | 8h         | 🔲     |
-| T068 | Final testing               | High     | 4h         | 🔲     |
-| T069 | Launch preparation          | High     | 2h         | 🔲     |
-| T070 | Go live!                    | High     | 2h         | 🔲     |
+| T073 | Setup production server     | High     | 4h         | 🔲     |
+| T074 | Configure Docker production | High     | 4h         | 🔲     |
+| T075 | Setup SSL/TLS               | High     | 2h         | 🔲     |
+| T076 | Configure monitoring        | High     | 4h         | 🔲     |
+| T077 | Setup alerting              | Medium   | 2h         | 🔲     |
+| T078 | Create user guide           | High     | 6h         | 🔲     |
+| T079 | Create video tutorials      | Low      | 8h         | 🔲     |
+| T080 | Final testing               | High     | 4h         | 🔲     |
+| T081 | Launch preparation          | High     | 2h         | 🔲     |
+| T082 | Go live!                    | High     | 2h         | 🔲     |
 
 ### Deliverables
 
@@ -301,8 +360,10 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 | Service            | Cost              |
 | ------------------ | ----------------- |
 | VPS (2GB RAM)      | $10-20            |
+| Groq API           | Free tier         |
 | OpenAI Whisper API | ~$5               |
 | ElevenLabs TTS     | $5-22             |
+| Brave Search API   | Free tier         |
 | Domain             | $1                |
 | **Total**          | **~$21-48/month** |
 
@@ -323,7 +384,7 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 - 🔲 Not Started
 - 🔄 In Progress
 - ✅ Completed
-- ⏸️ On Hold
+- ⏸️ On Hold/Bypassed
 - ❌ Cancelled
 
 ---
@@ -332,27 +393,32 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ### Decision Log
 
-| Date         | Decision                | Rationale                          |
-| ------------ | ----------------------- | ---------------------------------- |
-| Jan 29, 2026 | Use pnpm workspace      | Better performance, strict deps    |
-| Jan 29, 2026 | TypeScript strict mode  | Catch errors early                 |
-| Jan 29, 2026 | ESP32-S3 over ESP32     | Better audio support               |
-| Feb 15, 2026 | Bypass OpenClaw/Moltbot | Groq context overflow on free tier |
-| Feb 15, 2026 | Direct Groq API         | Simpler, more reliable             |
+| Date         | Decision                | Rationale                              |
+| ------------ | ----------------------- | -------------------------------------- |
+| Jan 29, 2026 | Use pnpm workspace      | Better performance, strict deps        |
+| Jan 29, 2026 | TypeScript strict mode  | Catch errors early                     |
+| Jan 29, 2026 | ESP32-S3 over ESP32     | Better audio support                   |
+| Jan 31, 2026 | Bypass OpenClaw/Moltbot | Groq context overflow on free tier     |
+| Jan 31, 2026 | Direct Groq API         | Simpler, more reliable                 |
+| Jan 31, 2026 | Clone OpenClaw Agent    | Full agent capabilities like ClawdBot  |
+| Jan 31, 2026 | AI Agent before ESP32   | Core feature first, ESP32 is extension |
 
 ### Risks
 
-| Risk                     | Impact | Mitigation                |
-| ------------------------ | ------ | ------------------------- |
-| Whisper API latency      | High   | Local Whisper option      |
-| ESP32 memory limits      | Medium | Optimize audio buffer     |
-| Moltbot breaking changes | Medium | Pin version, test updates |
+| Risk                  | Impact | Mitigation                     |
+| --------------------- | ------ | ------------------------------ |
+| Groq function calling | High   | Test thoroughly, fallback plan |
+| Whisper API latency   | High   | Local Whisper option           |
+| ESP32 memory limits   | Medium | Optimize audio buffer          |
+| Tool security         | High   | Approval flow, sandboxing      |
 
 ---
 
 ## 🔗 References
 
-- Moltbot Docs: https://docs.molt.bot/
+- OpenClaw Docs: https://docs.openclaw.ai/
+- Groq API: https://console.groq.com/docs
 - ESP32 Audio: https://docs.espressif.com/
 - Whisper API: https://platform.openai.com/docs/guides/speech-to-text
 - ElevenLabs: https://docs.elevenlabs.io/
+- Brave Search API: https://brave.com/search/api/
