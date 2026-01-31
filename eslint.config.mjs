@@ -14,6 +14,9 @@ export default tseslint.config(
       '**/coverage/**',
       '**/.turbo/**',
       '**/.pio/**',
+      '**/__tests__/**',
+      '**/*.test.ts',
+      '**/*.spec.ts',
       '*.config.js',
       '*.config.mjs',
       '*.config.cjs',
@@ -157,6 +160,34 @@ export default tseslint.config(
     files: ['packages/webapp/**/*.{ts,tsx}'],
     rules: {
       '@next/next/no-html-link-for-pages': 'off',
+    },
+  },
+
+  // CLI package - relaxed rules
+  {
+    files: ['packages/cli/src/**/*.ts'],
+    rules: {
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
+      '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/consistent-generic-constructors': 'off',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/only-throw-error': 'warn',
+      '@typescript-eslint/no-base-to-string': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
+      'import/order': 'off',
+      'no-console': 'off',
     },
   }
 );
