@@ -4,6 +4,7 @@
  */
 
 import Groq from 'groq-sdk';
+
 import { AgentErrorClass, withRetry } from '../errors';
 import type {
   LLMChatRequest,
@@ -234,8 +235,8 @@ export class GroqProvider implements LLMProvider {
       });
 
       // Track tool calls being built
-      const toolCallsInProgress: Map<number, { id: string; name: string; arguments: string }> =
-        new Map();
+      const toolCallsInProgress =
+        new Map<number, { id: string; name: string; arguments: string }>();
 
       for await (const chunk of stream) {
         const choice = chunk.choices?.[0];

@@ -5,6 +5,7 @@
 
 import type { ToolContext, ToolDefinition, ToolGroup, ToolResult } from '../types';
 import { generateId, matchGlob } from '../utils';
+
 import { BaseTool } from './base-tool';
 
 /**
@@ -29,7 +30,7 @@ const DEFAULT_CONFIG: RegistryConfig = {
  * Tool registry for managing available tools
  */
 export class ToolRegistry {
-  private tools: Map<string, BaseTool> = new Map();
+  private tools = new Map<string, BaseTool>();
   private config: RegistryConfig;
 
   constructor(config?: Partial<RegistryConfig>) {
@@ -196,7 +197,7 @@ export class ToolRegistry {
    * @returns Array of tool results
    */
   async executeMany(
-    calls: Array<{ name: string; params: Record<string, unknown> }>,
+    calls: { name: string; params: Record<string, unknown> }[],
     context: ToolContext
   ): Promise<ToolResult[]> {
     return Promise.all(calls.map((call) => this.execute(call.name, call.params, context)));

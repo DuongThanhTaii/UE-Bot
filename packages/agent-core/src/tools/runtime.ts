@@ -6,8 +6,11 @@
 import { exec as execCallback, spawn } from 'child_process';
 import * as os from 'os';
 import { promisify } from 'util';
+
 import { z } from 'zod';
+
 import type { ToolContext } from '../types';
+
 import { BaseTool } from './base-tool';
 
 const execAsync = promisify(execCallback);
@@ -218,7 +221,7 @@ export class ProcessTool extends BaseTool {
   });
 
   // Store running processes (in memory - will be lost on restart)
-  private static processes: Map<number, { command: string; startTime: Date }> = new Map();
+  private static processes = new Map<number, { command: string; startTime: Date }>();
 
   protected async execute(
     params: z.infer<typeof this.parameters>,
@@ -308,12 +311,12 @@ export class ProcessTool extends BaseTool {
   }
 
   private async listProcesses(): Promise<ProcessResult> {
-    const list: Array<{
+    const list: {
       pid: number;
       command: string;
       startTime: string;
       running: boolean;
-    }> = [];
+    }[] = [];
 
     for (const [pid, info] of ProcessTool.processes) {
       let running = false;
@@ -349,12 +352,12 @@ interface ProcessResult {
   command?: string;
   startTime?: string;
   message?: string;
-  processes?: Array<{
+  processes?: {
     pid: number;
     command: string;
     startTime: string;
     running: boolean;
-  }>;
+  }[];
   total?: number;
 }
 

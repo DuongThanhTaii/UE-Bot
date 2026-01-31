@@ -79,8 +79,8 @@ const DEFAULT_RULES: ApprovalRule[] = [
  */
 export class ApprovalCheckerImpl implements ApprovalChecker {
   private rules: ApprovalRule[];
-  private requests: Map<string, ApprovalRequest> = new Map();
-  private resolvers: Map<string, { resolve: () => void; reject: () => void }> = new Map();
+  private requests = new Map<string, ApprovalRequest>();
+  private resolvers = new Map<string, { resolve: () => void; reject: () => void }>();
 
   constructor(rules?: ApprovalRule[]) {
     this.rules = rules || DEFAULT_RULES;
@@ -146,8 +146,8 @@ export class ApprovalCheckerImpl implements ApprovalChecker {
     // Wait for approval/denial
     return new Promise<boolean>((resolve) => {
       this.resolvers.set(requestId, {
-        resolve: () => resolve(true),
-        reject: () => resolve(false),
+        resolve: () => { resolve(true); },
+        reject: () => { resolve(false); },
       });
     });
   }
@@ -218,7 +218,7 @@ export class ApprovalCheckerImpl implements ApprovalChecker {
   /**
    * Clear old requests (cleanup)
    */
-  clearOldRequests(maxAge: number = 3600000): void {
+  clearOldRequests(maxAge = 3600000): void {
     const cutoff = Date.now() - maxAge;
     for (const [id, request] of Array.from(this.requests.entries())) {
       if (request.createdAt.getTime() < cutoff) {

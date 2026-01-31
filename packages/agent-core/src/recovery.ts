@@ -313,7 +313,7 @@ export function withGracefulDegradation<T>(
 
   return async () => {
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Primary function timed out')), timeout);
+      setTimeout(() => { reject(new Error('Primary function timed out')); }, timeout);
     });
 
     try {

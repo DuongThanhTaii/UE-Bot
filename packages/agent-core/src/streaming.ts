@@ -131,11 +131,11 @@ export async function* parseSSEStream(
 export async function collectStreamEvents(generator: AsyncGenerator<AgentEvent>): Promise<{
   content: string;
   events: AgentEvent[];
-  toolCalls: Array<{ tool: string; result: unknown }>;
+  toolCalls: { tool: string; result: unknown }[];
 }> {
   const events: AgentEvent[] = [];
   let content = '';
-  const toolCalls: Array<{ tool: string; result: unknown }> = [];
+  const toolCalls: { tool: string; result: unknown }[] = [];
 
   for await (const event of generator) {
     events.push(event);

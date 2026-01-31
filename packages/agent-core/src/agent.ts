@@ -162,11 +162,11 @@ export class Agent {
     yield { type: 'start', sessionId, timestamp: Date.now() };
 
     try {
-      const toolCalls: Array<{
+      const toolCalls: {
         tool: string;
         arguments: Record<string, unknown>;
         result: ToolResult;
-      }> = [];
+      }[] = [];
 
       let iteration = 0;
       let finalContent = '';
@@ -186,7 +186,7 @@ export class Agent {
 
         // Stream LLM response
         let currentContent = '';
-        let currentToolCalls: ToolCall[] = [];
+        const currentToolCalls: ToolCall[] = [];
 
         const stream = this.provider.chatStream({
           messages,
@@ -306,11 +306,11 @@ export class Agent {
     abortSignal?: AbortSignal,
     onEvent?: (event: AgentEvent) => void
   ): Promise<AgentExecuteResult> {
-    const toolCalls: Array<{
+    const toolCalls: {
       tool: string;
       arguments: Record<string, unknown>;
       result: ToolResult;
-    }> = [];
+    }[] = [];
 
     let iteration = 0;
 

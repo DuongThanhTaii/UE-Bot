@@ -6,7 +6,9 @@
 import { Readability } from '@mozilla/readability';
 import { JSDOM } from 'jsdom';
 import { z } from 'zod';
+
 import type { ToolContext } from '../types';
+
 import { BaseTool } from './base-tool';
 
 /**
@@ -95,12 +97,12 @@ export class WebSearchTool extends BaseTool {
 
 interface BraveSearchResponse {
   web?: {
-    results?: Array<{
+    results?: {
       title: string;
       url: string;
       description: string;
       age?: string;
-    }>;
+    }[];
   };
 }
 
@@ -214,7 +216,7 @@ export class WebFetchTool extends BaseTool {
 
     // Extract links if requested
     if (params.includeLinks) {
-      const links: Array<{ text: string; href: string }> = [];
+      const links: { text: string; href: string }[] = [];
       const anchors = document.querySelectorAll('a[href]');
 
       anchors.forEach((anchor) => {
@@ -240,7 +242,7 @@ interface FetchResult {
   contentType: 'html' | 'text' | 'article';
   byline?: string;
   excerpt?: string;
-  links?: Array<{ text: string; href: string }>;
+  links?: { text: string; href: string }[];
 }
 
 // ============================================================================
@@ -301,11 +303,11 @@ export class ApiRequestTool extends BaseTool {
     context: ToolContext
   ): Promise<ApiResponse> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), params.timeout);
+    const timeoutId = setTimeout(() => { controller.abort(); }, params.timeout);
 
     // Use context abort signal if available
     if (context.abortSignal) {
-      context.abortSignal.addEventListener('abort', () => controller.abort());
+      context.abortSignal.addEventListener('abort', () => { controller.abort(); });
     }
 
     try {

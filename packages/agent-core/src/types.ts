@@ -264,11 +264,11 @@ export interface AgentExecuteResult {
   /** Final response content */
   content: string;
   /** All tool calls made */
-  toolCalls: Array<{
+  toolCalls: {
     tool: string;
     arguments: Record<string, unknown>;
     result: ToolResult;
-  }>;
+  }[];
   /** Number of iterations */
   iterations: number;
   /** Total tokens used */

@@ -3,9 +3,11 @@
  * @module @ue-bot/agent-core/memory/sqlite-store
  */
 
-import Database from 'better-sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import Database from 'better-sqlite3';
+
 import type { MemoryEntry, MemorySearchOptions, MemoryStore } from '../types';
 import { generateId } from '../utils';
 
@@ -147,14 +149,14 @@ export class SQLiteMemoryStore implements MemoryStore {
       LIMIT ?
     `);
 
-    const rows = stmt.all(escapedQuery, limit) as Array<{
+    const rows = stmt.all(escapedQuery, limit) as {
       id: string;
       content: string;
       metadata: string;
       created_at: string;
       updated_at: string;
       rank: number;
-    }>;
+    }[];
 
     return rows.map((row) => ({
       id: row.id,
@@ -258,13 +260,13 @@ export class SQLiteMemoryStore implements MemoryStore {
       LIMIT ? OFFSET ?
     `);
 
-    const rows = stmt.all(limit, offset) as Array<{
+    const rows = stmt.all(limit, offset) as {
       id: string;
       content: string;
       metadata: string;
       created_at: string;
       updated_at: string;
-    }>;
+    }[];
 
     return rows.map((row) => ({
       id: row.id,

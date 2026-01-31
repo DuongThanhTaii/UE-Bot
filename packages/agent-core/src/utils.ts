@@ -4,6 +4,7 @@
  */
 
 import { randomBytes } from 'crypto';
+
 import type { ToolCall, ToolResult } from './types';
 
 /**
@@ -199,7 +200,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
  */
 export function timeout<T>(ms: number, message = 'Operation timed out'): Promise<T> {
   return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(message)), ms);
+    setTimeout(() => { reject(new Error(message)); }, ms);
   });
 }
 
