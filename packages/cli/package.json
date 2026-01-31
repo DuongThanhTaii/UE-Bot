@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ue-bot/agent-core": "workspace:*",
     "@ue-bot/shared": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
