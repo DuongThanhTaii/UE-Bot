@@ -10,6 +10,6 @@ export type { RegistryConfig } from './registry';
 // Tool implementations
 export * from './fs';
 export * from './memory';
+export * from './open';
 export * from './runtime';
 export * from './web';
-export * from './open';

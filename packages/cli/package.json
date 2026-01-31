@@ -13,6 +13,8 @@
     "dev": "tsx src/index.ts",
     "build": "tsup src/index.ts --format esm --dts --clean",
     "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint src --ignore-pattern '**/*.test.ts'",
     "typecheck": "tsc --noEmit"
   },
@@ -34,15 +36,10 @@
     "@types/node": "^22.10.7",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^1.6.0"
   },
-  "keywords": [
-    "ai",
-    "cli",
-    "agent",
-    "groq",
-    "llm"
-  ],
+  "keywords": ["ai", "cli", "agent", "groq", "llm"],
   "author": "UE-Bot Team",
   "license": "MIT"
 }

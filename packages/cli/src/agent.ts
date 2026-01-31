@@ -104,7 +104,11 @@ export class Agent {
 
           // Get usage from final chunk (if available in x_groq extension)
           // Streaming chunks don't include standard usage, only available via x_groq
-          const xGroq = chunk as unknown as { x_groq?: { usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number } } };
+          const xGroq = chunk as unknown as {
+            x_groq?: {
+              usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+            };
+          };
           if (xGroq.x_groq?.usage) {
             usage = {
               promptTokens: xGroq.x_groq.usage.prompt_tokens ?? 0,

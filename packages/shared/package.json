@@ -36,8 +36,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "echo 'No tests yet'",
+    "test:watch": "echo 'No tests yet'"
   },
   "dependencies": {
     "zod": "^3.23.0"
