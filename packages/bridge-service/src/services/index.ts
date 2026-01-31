@@ -1,2 +1,3 @@
 // Export services
-export {};
+export * from './gateway.service';
+export * from './health.service';

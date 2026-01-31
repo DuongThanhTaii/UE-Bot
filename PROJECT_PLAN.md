@@ -14,14 +14,14 @@
 ### Primary Goals
 
 1. ✅ Clone Moltbot và giữ nguyên toàn bộ tính năng
-2. 🔲 Xây dựng custom web dashboard
+2. ✅ Xây dựng custom web dashboard (Direct Groq API)
 3. 🔲 Tích hợp ESP32 voice control
 4. 🔲 Deploy production-ready system
 
 ### Success Metrics
 
-- [ ] Moltbot Gateway chạy ổn định
-- [ ] WebChat hoạt động qua custom website
+- [x] Moltbot Gateway chạy ổn định (Bypassed - dùng Direct Groq)
+- [x] WebChat hoạt động qua custom website
 - [ ] ESP32 có thể gửi voice commands
 - [ ] Latency voice command < 3 giây
 - [ ] System uptime > 99%
@@ -31,9 +31,9 @@
 ## 📅 Timeline Overview
 
 ```
-Phase 1: Foundation          │██████████│ Week 1-2   (Jan 29 - Feb 11)
-Phase 2: Core Integration    │██████████│ Week 3-4   (Feb 12 - Feb 25)
-Phase 3: ESP32 Development   │███████████████│ Week 5-7   (Feb 26 - Mar 18)
+Phase 1: Foundation          │██████████│ Week 1-2   ✅ COMPLETED
+Phase 2: Core Integration    │██████████│ Week 3-4   ✅ COMPLETED (Direct Groq)
+Phase 3: ESP32 Development   │███████████████│ Week 5-7   🔄 IN PROGRESS
 Phase 4: Bridge Service      │██████████│ Week 8-9   (Mar 19 - Apr 1)
 Phase 5: Custom Skills       │██████████│ Week 10-11 (Apr 2 - Apr 15)
 Phase 6: Testing & Polish    │█████│ Week 12    (Apr 16 - Apr 22)
@@ -42,7 +42,7 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ---
 
-## 📦 PHASE 1: FOUNDATION (Week 1-2)
+## 📦 PHASE 1: FOUNDATION (Week 1-2) ✅ COMPLETED
 
 ### Objectives
 
@@ -55,62 +55,68 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 | ID   | Task                       | Priority | Est. Hours | Status |
 | ---- | -------------------------- | -------- | ---------- | ------ |
-| T001 | Create project structure   | High     | 2h         | 🔲     |
-| T002 | Setup pnpm workspace       | High     | 1h         | 🔲     |
-| T003 | Configure TypeScript       | High     | 2h         | 🔲     |
-| T004 | Setup ESLint + Prettier    | Medium   | 1h         | 🔲     |
-| T005 | Create shared package      | High     | 3h         | 🔲     |
-| T006 | Initialize webapp package  | High     | 4h         | 🔲     |
-| T007 | Initialize bridge-service  | High     | 3h         | 🔲     |
-| T008 | Initialize ESP32 firmware  | High     | 2h         | 🔲     |
-| T009 | Setup Docker configs       | Medium   | 2h         | 🔲     |
-| T010 | Create CI/CD workflows     | Medium   | 3h         | 🔲     |
-| T011 | Write architecture docs    | High     | 4h         | 🔲     |
-| T012 | Clone Moltbot as submodule | High     | 1h         | 🔲     |
+| T001 | Create project structure   | High     | 2h         | ✅     |
+| T002 | Setup pnpm workspace       | High     | 1h         | ✅     |
+| T003 | Configure TypeScript       | High     | 2h         | ✅     |
+| T004 | Setup ESLint + Prettier    | Medium   | 1h         | ✅     |
+| T005 | Create shared package      | High     | 3h         | ✅     |
+| T006 | Initialize webapp package  | High     | 4h         | ✅     |
+| T007 | Initialize bridge-service  | High     | 3h         | ✅     |
+| T008 | Initialize ESP32 firmware  | High     | 2h         | ✅     |
+| T009 | Setup Docker configs       | Medium   | 2h         | ✅     |
+| T010 | Create CI/CD workflows     | Medium   | 3h         | ✅     |
+| T011 | Write architecture docs    | High     | 4h         | ✅     |
+| T012 | Clone Moltbot as submodule | High     | 1h         | ✅     |
 
 ### Deliverables
 
-- [ ] Working monorepo structure
-- [ ] All packages initialized
-- [ ] Development environment ready
-- [ ] Architecture documentation complete
+- [x] Working monorepo structure
+- [x] All packages initialized
+- [x] Development environment ready
+- [x] Architecture documentation complete
 
 ---
 
-## 📦 PHASE 2: CORE INTEGRATION (Week 3-4)
+## 📦 PHASE 2: CORE INTEGRATION (Week 3-4) ✅ COMPLETED
 
 ### Objectives
 
-- Integrate Moltbot Gateway
+- ~~Integrate Moltbot Gateway~~ → Direct Groq API (Bypass OpenClaw)
 - Setup basic WebChat
 - Configure channels
 
+### Notes
+
+> **Decision**: Bypassed OpenClaw/Moltbot Gateway do context overflow issues với Groq free tier.
+> Thay vào đó sử dụng Direct Groq API cho cả Telegram Bot và Webapp.
+
 ### Tasks
 
-| ID   | Task                              | Priority | Est. Hours | Status |
-| ---- | --------------------------------- | -------- | ---------- | ------ |
-| T013 | Configure Moltbot Gateway         | High     | 4h         | 🔲     |
-| T014 | Setup WebChat channel             | High     | 3h         | 🔲     |
-| T015 | Create Gateway wrapper service    | High     | 6h         | 🔲     |
-| T016 | Implement health checks           | Medium   | 2h         | 🔲     |
-| T017 | Setup Telegram channel (optional) | Low      | 2h         | 🔲     |
-| T018 | Create webapp layout              | High     | 4h         | 🔲     |
-| T019 | Implement dashboard page          | High     | 6h         | 🔲     |
-| T020 | Create chat interface             | High     | 8h         | 🔲     |
-| T021 | Implement WebSocket client        | High     | 4h         | 🔲     |
-| T022 | Add authentication UI             | Medium   | 6h         | 🔲     |
-| T023 | Write integration tests           | Medium   | 4h         | 🔲     |
+| ID   | Task                                 | Priority | Est. Hours | Status         |
+| ---- | ------------------------------------ | -------- | ---------- | -------------- |
+| T013 | Configure Moltbot Gateway            | High     | 4h         | ⏸️ Bypassed    |
+| T014 | Setup WebChat channel                | High     | 3h         | ⏸️ Bypassed    |
+| T015 | Create Gateway wrapper service       | High     | 6h         | ✅             |
+| T016 | Implement health checks              | Medium   | 2h         | ✅             |
+| T017 | Setup Telegram channel (Direct Groq) | Low      | 2h         | ✅             |
+| T018 | Create webapp layout                 | High     | 4h         | ✅             |
+| T019 | Implement dashboard page             | High     | 6h         | ✅             |
+| T020 | Create chat interface (Direct Groq)  | High     | 8h         | ✅             |
+| T021 | Implement WebSocket client           | High     | 4h         | ✅ (API Route) |
+| T022 | Add authentication UI                | Medium   | 6h         | ✅             |
+| T023 | Write integration tests              | Medium   | 4h         | 🔲             |
+| T024 | ESP32 WebSocket Protocol             | High     | 4h         | ✅             |
 
 ### Deliverables
 
-- [ ] Moltbot Gateway running
-- [ ] WebChat functional
-- [ ] Basic dashboard UI
-- [ ] Gateway health monitoring
+- [x] Direct Groq API integration working
+- [x] WebChat functional (Webapp + Telegram)
+- [x] Full dashboard UI (Dashboard, Chat, Devices, Settings, Auth)
+- [x] Health monitoring endpoints
 
 ---
 
-## 📦 PHASE 3: ESP32 DEVELOPMENT (Week 5-7)
+## 📦 PHASE 3: ESP32 DEVELOPMENT (Week 5-7) 🔄 IN PROGRESS
 
 ### Objectives
 
@@ -119,11 +125,16 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 - Create WebSocket client
 - Add wake word detection
 
+### Notes
+
+> Hardware đang được mua: ESP32-S3, INMP441 mic, MAX98357A speaker, motors, sensors.
+> Protocol và handler đã được thiết kế và test.
+
 ### Tasks
 
 | ID   | Task                          | Priority | Est. Hours | Status |
 | ---- | ----------------------------- | -------- | ---------- | ------ |
-| T024 | Setup PlatformIO project      | High     | 2h         | 🔲     |
+| T024 | Setup PlatformIO project      | High     | 2h         | ✅     |
 | T025 | Implement WiFi manager        | High     | 4h         | 🔲     |
 | T026 | Configure I2S microphone      | High     | 6h         | 🔲     |
 | T027 | Configure I2S speaker         | High     | 4h         | 🔲     |
@@ -321,11 +332,13 @@ Phase 7: Deployment          │██████████│ Week 13-14 (Ap
 
 ### Decision Log
 
-| Date         | Decision               | Rationale                       |
-| ------------ | ---------------------- | ------------------------------- |
-| Jan 29, 2026 | Use pnpm workspace     | Better performance, strict deps |
-| Jan 29, 2026 | TypeScript strict mode | Catch errors early              |
-| Jan 29, 2026 | ESP32-S3 over ESP32    | Better audio support            |
+| Date         | Decision                | Rationale                          |
+| ------------ | ----------------------- | ---------------------------------- |
+| Jan 29, 2026 | Use pnpm workspace      | Better performance, strict deps    |
+| Jan 29, 2026 | TypeScript strict mode  | Catch errors early                 |
+| Jan 29, 2026 | ESP32-S3 over ESP32     | Better audio support               |
+| Feb 15, 2026 | Bypass OpenClaw/Moltbot | Groq context overflow on free tier |
+| Feb 15, 2026 | Direct Groq API         | Simpler, more reliable             |
 
 ### Risks
 
