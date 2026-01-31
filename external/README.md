@@ -44,6 +44,7 @@ If you need to customize Moltbot:
 ## Note on Submodules
 
 If Moltbot repository is not available:
+
 - The project will still work without the submodule
 - Bridge service will use mock responses in development
 - You can substitute with any compatible AI backend

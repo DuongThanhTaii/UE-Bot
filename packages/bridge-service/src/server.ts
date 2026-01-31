@@ -4,31 +4,33 @@ import compression from 'compression';
 import cors from 'cors';
 import express, { type Express, type Request, type Response } from 'express';
 import helmet from 'helmet';
-import { WebSocketServer, type WebSocket } from 'ws';
 
 import { config } from './config';
 import { ESP32Handler } from './handlers/esp32.handler';
 import { errorMiddleware } from './middleware/error.middleware';
+import { getHealthService } from './services/health.service';
 import { logger } from './utils/logger';
 
 export class Server {
   private app: Express;
   private httpServer: HTTPServer;
-  private wss: WebSocketServer;
   private esp32Handler: ESP32Handler;
+  private healthService = getHealthService();
 
   constructor() {
     this.app = express();
     this.httpServer = createServer(this.app);
-    this.wss = new WebSocketServer({
-      server: this.httpServer,
+
+    // ESP32Handler quản lý WebSocket server riêng
+    this.esp32Handler = new ESP32Handler({
       path: '/ws/esp32',
+      server: this.httpServer,
+      pingInterval: 30000,
+      pingTimeout: 60000,
     });
-    this.esp32Handler = new ESP32Handler();
 
     this.setupMiddleware();
     this.setupRoutes();
-    this.setupWebSocket();
   }
 
   private setupMiddleware(): void {
@@ -40,14 +42,40 @@ export class Server {
   }
 
   private setupRoutes(): void {
-    // Health check
-    this.app.get('/health', (_req: Request, res: Response) => {
-      res.json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        service: '@ue-bot/bridge-service',
-        uptime: process.uptime(),
-      });
+    // Health check - detailed status
+    this.app.get('/health', async (_req: Request, res: Response) => {
+      try {
+        const health = await this.healthService.checkHealth();
+        const statusCode =
+          health.status === 'healthy' ? 200 : health.status === 'degraded' ? 200 : 503;
+        res.status(statusCode).json(health);
+      } catch (error) {
+        res.status(503).json({
+          status: 'unhealthy',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
+    });
+
+    // Readiness probe (Kubernetes)
+    this.app.get('/ready', async (_req: Request, res: Response) => {
+      try {
+        const readiness = await this.healthService.checkReadiness();
+        res.status(readiness.ready ? 200 : 503).json(readiness);
+      } catch (error) {
+        res.status(503).json({ ready: false, error: 'Health check failed' });
+      }
+    });
+
+    // Liveness probe (Kubernetes)
+    this.app.get('/live', (_req: Request, res: Response) => {
+      const liveness = this.healthService.checkLiveness();
+      res.json(liveness);
+    });
+
+    // Simple ping endpoint
+    this.app.get('/ping', (_req: Request, res: Response) => {
+      res.send('pong');
     });
 
     // Device routes
@@ -74,25 +102,10 @@ export class Server {
     this.app.use(errorMiddleware);
   }
 
-  private setupWebSocket(): void {
-    this.wss.on('connection', (ws: WebSocket, req) => {
-      const deviceId = req.url?.split('?id=')[1] ?? 'unknown';
-      logger.info({ deviceId }, 'ESP32 device connected');
-
-      this.esp32Handler.handleConnection(ws, deviceId);
-
-      ws.on('close', () => {
-        logger.info({ deviceId }, 'ESP32 device disconnected');
-        this.esp32Handler.handleDisconnection(deviceId);
-      });
-
-      ws.on('error', (error) => {
-        logger.error({ deviceId, error }, 'WebSocket error');
-      });
-    });
-  }
-
   public start(): void {
+    // Start health service periodic checks
+    this.healthService.startPeriodicChecks(30000);
+
     this.httpServer.listen(config.PORT, config.HOST, () => {
       logger.info({ host: config.HOST, port: config.PORT }, '🚀 Bridge service started');
     });
@@ -100,11 +113,17 @@ export class Server {
 
   public stop(): Promise<void> {
     return new Promise((resolve) => {
-      this.wss.close();
+      this.healthService.stopPeriodicChecks();
+      this.esp32Handler.shutdown();
       this.httpServer.close(() => {
         logger.info('Bridge service stopped');
         resolve();
       });
     });
+  }
+
+  // Expose ESP32 handler for external services
+  public getESP32Handler(): ESP32Handler {
+    return this.esp32Handler;
   }
 }

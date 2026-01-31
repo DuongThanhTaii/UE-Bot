@@ -1,51 +1,30 @@
-import { moltbotConfig, getMoltbotEndpoints } from "../moltbot-config";
+import {
+  getMoltbotEndpoints,
+  moltbotConfig,
+  type MoltbotConfig,
+  type MoltbotEndpoints,
+} from '../moltbot-config';
 
-interface ChatMessage {
-  role: "user" | "assistant" | "system";
-  content: string;
-}
-
-interface ChatRequest {
-  message: string;
-  conversationId?: string;
-  context?: Record<string, unknown>;
-}
-
-interface ChatResponse {
-  message: string;
-  conversationId: string;
-  metadata?: Record<string, unknown>;
-}
-
+/**
+ * MoltbotClient provides a simple HTTP interface to OpenClaw Gateway
+ * Note: For real-time chat, use WebChatClient instead (WebSocket-based)
+ */
 export class MoltbotClient {
-  private config = moltbotConfig;
-  private endpoints = getMoltbotEndpoints(this.config);
+  private config: MoltbotConfig;
+  private endpoints: MoltbotEndpoints;
 
-  async chat(request: ChatRequest): Promise<ChatResponse> {
-    const response = await fetch(this.endpoints.chat, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(this.config.apiKey && {
-          Authorization: `Bearer ${this.config.apiKey}`,
-        }),
-      },
-      body: JSON.stringify(request),
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Moltbot error: ${String(response.status)} ${response.statusText}`,
-      );
-    }
-
-    return response.json() as Promise<ChatResponse>;
+  constructor(config?: Partial<MoltbotConfig>) {
+    this.config = { ...moltbotConfig, ...config };
+    this.endpoints = getMoltbotEndpoints(this.config);
   }
 
+  /**
+   * Check if Gateway is healthy
+   */
   async healthCheck(): Promise<boolean> {
     try {
       const response = await fetch(this.endpoints.health, {
-        method: "GET",
+        method: 'GET',
         signal: AbortSignal.timeout(5000),
       });
       return response.ok;
@@ -54,24 +33,40 @@ export class MoltbotClient {
     }
   }
 
-  async getConversation(conversationId: string): Promise<ChatMessage[]> {
-    const response = await fetch(
-      `${this.endpoints.conversation}/${conversationId}`,
-      {
-        method: "GET",
+  /**
+   * Get agent status from Gateway
+   */
+  async getAgentStatus(): Promise<Record<string, unknown> | null> {
+    try {
+      const response = await fetch(this.endpoints.agentStatus, {
+        method: 'GET',
         headers: {
-          ...(this.config.apiKey && {
-            Authorization: `Bearer ${this.config.apiKey}`,
+          ...(this.config.apiToken && {
+            Authorization: `Bearer ${this.config.apiToken}`,
           }),
         },
-      },
-    );
+        signal: AbortSignal.timeout(5000),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to get conversation: ${response.statusText}`);
+      if (!response.ok) return null;
+      return response.json() as Promise<Record<string, unknown>>;
+    } catch {
+      return null;
     }
+  }
 
-    return response.json() as Promise<ChatMessage[]>;
+  /**
+   * Get WebSocket URL for chat
+   */
+  getWebSocketUrl(): string {
+    return this.endpoints.websocket;
+  }
+
+  /**
+   * Get Control UI URL
+   */
+  getControlUIUrl(): string {
+    return this.endpoints.controlUI;
   }
 }
 
