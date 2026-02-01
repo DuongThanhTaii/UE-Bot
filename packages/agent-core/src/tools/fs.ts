@@ -8,6 +8,7 @@ import * as path from 'path';
 
 import { z } from 'zod';
 
+import { checkPathSecurity } from '../security';
 import type { ToolContext } from '../types';
 
 import { BaseTool } from './base-tool';
@@ -72,6 +73,24 @@ export class ReadTool extends BaseTool {
     context: ToolContext
   ): Promise<{ content: string; lines: number; truncated: boolean }> {
     const resolvedPath = resolvePath(params.path, context.workingDirectory);
+
+    // Security check for sensitive files
+    const security = checkPathSecurity(resolvedPath);
+    if (!security.allowed && !security.requiresApproval) {
+      throw new Error(
+        `🚫 BLOCKED: Cannot read this file for security reasons.\n` +
+        `Reason: ${security.reason}\n` +
+        `This file may contain sensitive information (passwords, keys, credentials).`
+      );
+    }
+
+    if (security.severity === 'danger') {
+      throw new Error(
+        `⚠️ SENSITIVE FILE: Reading "${params.path}" is not allowed.\n` +
+        `Reason: ${security.reason}\n` +
+        `This file may contain sensitive credentials or personal data.`
+      );
+    }
 
     // Check if file exists
     const stats = await fs.stat(resolvedPath);
@@ -139,6 +158,16 @@ export class WriteTool extends BaseTool {
     context: ToolContext
   ): Promise<{ path: string; size: number }> {
     const resolvedPath = resolvePath(params.path, context.workingDirectory);
+
+    // Security check for sensitive files
+    const security = checkPathSecurity(resolvedPath);
+    if (security.severity === 'danger' || security.severity === 'blocked') {
+      throw new Error(
+        `🚫 BLOCKED: Cannot write to this file for security reasons.\n` +
+        `Reason: ${security.reason}\n` +
+        `Writing to sensitive files is not allowed.`
+      );
+    }
 
     // Create directories if needed
     if (params.createDirectories) {

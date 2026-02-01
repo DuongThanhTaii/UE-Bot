@@ -1,149 +1,241 @@
-# UE-Bot
+# 🤖 UE-Bot
 
-🤖 **AI Assistant Platform** - Clone của Clawdbot/Moltbot với custom webapp và ESP32 voice control.
+**AI Assistant Platform** - Clone của Clawdbot/Moltbot với custom webapp, CLI, Telegram bot và ESP32 voice control.
 
 [![CI](https://github.com/DuongThanhTaii/UE-Bot/actions/workflows/ci.yml/badge.svg)](https://github.com/DuongThanhTaii/UE-Bot/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 🌟 Features
 
-- **Moltbot Core**: Full-featured AI assistant engine
-- **Custom Webapp**: Modern web interface với Next.js 14
-- **ESP32 Voice Control**: Hardware voice input/output
-- **Multi-channel Support**: Web, API, và hardware devices
+- **Multi-Provider Support**: Groq (Free), OpenAI, Claude
+- **Web Dashboard**: Modern web interface với Next.js 14
+- **CLI Tool**: Command-line interface cho terminal lovers
+- **Telegram Bot**: Chat với bot qua Telegram
+- **ESP32 Voice Control**: Hardware voice input/output (planned)
+- **Tool System**: Đọc/ghi file, chạy code, mở URL, tìm kiếm web
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/DuongThanhTaii/UE-Bot.git
+cd UE-Bot
+pnpm install
+pnpm build
+```
+
+### 2. Get API Key (Free)
+
+Bạn cần một API key từ một trong các providers sau:
+
+| Provider    | Free Tier   | Link                                        |
+| ----------- | ----------- | ------------------------------------------- |
+| **Groq** ⭐ | ✅ Miễn phí | https://console.groq.com/keys               |
+| OpenAI      | ❌ Trả phí  | https://platform.openai.com/api-keys        |
+| Claude      | ❌ Trả phí  | https://console.anthropic.com/settings/keys |
+
+> 💡 **Khuyến nghị**: Bắt đầu với Groq vì miễn phí. OpenAI/Claude có tool calling tốt hơn.
+
+---
+
+## 💻 Web Interface
+
+### Start
+
+```bash
+pnpm --filter @ue-bot/webapp dev
+```
+
+### Configure
+
+1. Mở browser: http://localhost:3000
+2. Click icon ⚙️ **Settings** trên header
+3. Chọn Provider (Groq/OpenAI/Claude)
+4. Nhập API Key
+5. Chọn Model
+6. **Save** và bắt đầu chat!
+
+---
+
+## 🖥️ CLI
+
+### Interactive Setup
+
+```bash
+pnpm --filter @ue-bot/cli dev config setup
+```
+
+Wizard sẽ hỏi:
+
+1. Chọn Provider (Groq/OpenAI/Claude)
+2. Nhập API Key
+3. Chọn Model
+4. Enable tools?
+
+### Start Chat
+
+```bash
+pnpm --filter @ue-bot/cli dev chat
+```
+
+### Các lệnh khác
+
+```bash
+# Xem config hiện tại
+pnpm --filter @ue-bot/cli dev config show
+
+# Set API key trực tiếp
+pnpm --filter @ue-bot/cli dev config set groqApiKey YOUR_API_KEY
+
+# Reset config
+pnpm --filter @ue-bot/cli dev config reset
+```
+
+---
+
+## 📱 Telegram Bot
+
+### 1. Tạo Bot
+
+1. Message [@BotFather](https://t.me/botfather) trên Telegram
+2. Send `/newbot`
+3. Copy **Bot Token**
+
+### 2. Configure
+
+```bash
+cd packages/telegram-bot
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token
+GROQ_API_KEY=your_groq_api_key
+```
+
+### 3. Start
+
+```bash
+pnpm --filter @ue-bot/telegram-bot dev
+```
+
+---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Webapp    │────▶│   Bridge    │────▶│   Moltbot   │
-│  (Next.js)  │     │  (Express)  │     │  (AI Core)  │
-└─────────────┘     └──────┬──────┘     └─────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │    ESP32    │
-                    │ (Voice I/O) │
-                    └─────────────┘
+                     ┌─────────────────┐
+                     │   LLM Provider  │
+                     │ Groq/OpenAI/    │
+                     │    Claude       │
+                     └────────┬────────┘
+                              │
+         ┌────────────────────┼────────────────────┐
+         │                    │                    │
+         ▼                    ▼                    ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  Web Interface  │  │       CLI       │  │  Telegram Bot   │
+│   (Next.js)     │  │   (Commander)   │  │    (grammY)     │
+└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+         │                    │                    │
+         └────────────────────┼────────────────────┘
+                              │
+                     ┌────────▼────────┐
+                     │   Agent Core    │
+                     │  (Tool System)  │
+                     └─────────────────┘
 ```
 
 ## 📦 Project Structure
 
 ```
-.
-├── packages/
-│   ├── webapp/           # Next.js 14 frontend
-│   ├── bridge-service/   # Express + WebSocket backend
-│   ├── shared/           # Shared types & utilities
-│   └── esp32-firmware/   # PlatformIO ESP32 code
-├── external/
-│   └── moltbot/          # Moltbot git submodule
-├── docs/                 # Documentation
-└── tasks/                # Task definitions for agents
+packages/
+├── agent-core/       # Core AI agent với tools
+├── webapp/           # Next.js 14 web interface
+├── cli/              # Command-line interface
+├── telegram-bot/     # Telegram bot integration
+└── shared/           # Shared types & utilities
 ```
 
-## 🚀 Quick Start
+## 🛠️ Available Tools
 
-### Prerequisites
+| Tool         | Mô tả                        |
+| ------------ | ---------------------------- |
+| `read`       | Đọc file                     |
+| `write`      | Ghi file                     |
+| `node`       | Chạy Node.js code            |
+| `shell`      | Chạy shell commands          |
+| `open`       | Mở URL/ứng dụng              |
+| `web_search` | Tìm kiếm web (cần Brave API) |
+| `memory_*`   | Lưu/tìm thông tin            |
 
-- Node.js 22+
-- pnpm 9+
-- Docker & Docker Compose (optional)
+---
 
-### Installation
+## 🔒 Security
 
-```bash
-# Clone with submodules
-git clone --recurse-submodules https://github.com/DuongThanhTaii/UE-Bot.git
-cd UE-Bot
+UE-Bot có hệ thống bảo mật tích hợp để bảo vệ người dùng:
 
-# Install dependencies
-pnpm install
+### Blocked Commands (Tự động chặn)
 
-# Configure environment
-cp .env.example .env.local
-# Edit .env.local with your API keys
+- ❌ `format C:`, `rm -rf /` - Xóa ổ đĩa
+- ❌ `curl | bash` - Download và chạy code
+- ❌ Reverse shells, crypto miners
+- ❌ Registry/system file destruction
 
-# Start development
-pnpm dev
-```
+### Sensitive Files (Không cho phép đọc/ghi)
 
-### Using Docker
+- 🔐 `.env`, `.pem`, `.key` - API keys, certificates
+- 🔐 `.ssh/`, `id_rsa` - SSH keys
+- 🔐 `wallet.dat`, `.bitcoin/` - Crypto wallets
+- 🔐 Browser passwords, cookies
 
-```bash
-# Development
-docker-compose -f docker-compose.dev.yml up -d
+### Suspicious Commands (Cần xác nhận)
 
-# Production
-docker-compose up -d
-```
+- ⚠️ `sudo`, `curl`, `wget`
+- ⚠️ `npm install -g`, `pip install`
+- ⚠️ Process killing commands
+
+> 💡 Bạn có thể customize rules trong `packages/agent-core/src/security/`
+
+---
+
+## ⚠️ Known Issues
+
+### Groq Function Calling
+
+Groq free tier có function calling không ổn định. Một số tools có thể fail ngẫu nhiên.
+
+**Giải pháp**: Sử dụng OpenAI hoặc Claude.
+
+---
 
 ## 🔧 Development
 
 ```bash
-# Run all packages in dev mode
-pnpm dev
-
-# Run specific package
-pnpm --filter @ue-bot/webapp dev
-pnpm --filter @ue-bot/bridge-service dev
-
 # Build all
 pnpm build
 
 # Run tests
 pnpm test
 
-# Lint & format
+# Type check
+pnpm typecheck
+
+# Lint
 pnpm lint
-pnpm format
 ```
-
-## 🎛️ ESP32 Hardware
-
-### Required Components
-
-| Component       | Description          |
-| --------------- | -------------------- |
-| ESP32-S3 DevKit | Main microcontroller |
-| INMP441         | I2S Microphone       |
-| MAX98357A       | I2S DAC + Amplifier  |
-| Speaker         | 3W 8Ω speaker        |
-
-### Build Firmware
-
-```bash
-cd packages/esp32-firmware
-pio run -e esp32-s3
-pio run -t upload
-```
-
-## 📚 Documentation
-
-- [Architecture](docs/architecture/README.md)
-- [API Reference](docs/api/)
-- [Getting Started](docs/guides/getting-started.md)
-- [ESP32 Setup](docs/guides/esp32-setup.md)
-- [Deployment](docs/guides/deployment.md)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'feat: add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Moltbot](https://github.com/moltbot/moltbot) - AI assistant core
-- [Next.js](https://nextjs.org/) - React framework
-- [Shadcn/UI](https://ui.shadcn.com/) - UI components
-- [PlatformIO](https://platformio.org/) - ESP32 development
 
 ---
 
-Made with ❤️ by [DuongThanhTai](https://github.com/DuongThanhTaii)
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE).
+
+---
+
+**Made with ❤️ by HCMUE Students**

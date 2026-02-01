@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import inquirer from 'inquirer';
-import type { CLIConfig } from '../types.js';
-import { AVAILABLE_MODELS } from '../types.js';
+import type { CLIConfig, ProviderType } from '../types.js';
+import { AVAILABLE_MODELS_BY_PROVIDER, DEFAULT_MODELS, PROVIDER_NAMES } from '../types.js';
 import {
   getConfig,
   getConfigPath,
@@ -29,12 +29,20 @@ configCommand
       console.log(chalk.cyan('\n📋 UE-Bot Configuration\n'));
       console.log(chalk.gray(`Config file: ${getConfigPath()}\n`));
 
-      console.log(chalk.bold('API Keys:'));
+      console.log(chalk.bold('Provider:'));
+      console.log(
+        `  provider:      ${PROVIDER_NAMES[config.defaultProvider as ProviderType] || config.defaultProvider}`
+      );
+
+      console.log(chalk.bold('\nAPI Keys:'));
       console.log(
         `  groqApiKey:    ${config.groqApiKey ? chalk.green('✓ Set') : chalk.red('✗ Not set')}`
       );
       console.log(
         `  openaiApiKey:  ${config.openaiApiKey ? chalk.green('✓ Set') : chalk.gray('Not set')}`
+      );
+      console.log(
+        `  claudeApiKey:  ${config.claudeApiKey ? chalk.green('✓ Set') : chalk.gray('Not set')}`
       );
       console.log(
         `  braveApiKey:   ${config.braveApiKey ? chalk.green('✓ Set') : chalk.gray('Not set')}`
@@ -96,19 +104,52 @@ configCommand
   .action(async () => {
     console.log(chalk.cyan('\n🚀 UE-Bot Configuration Setup\n'));
 
+    // First, select provider
+    const { provider } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'provider',
+        message: 'Select LLM Provider:',
+        choices: [
+          { name: '🆓 Groq (Free - Fast inference)', value: 'groq' },
+          { name: '🤖 OpenAI (Best tool support)', value: 'openai' },
+          { name: '🧠 Claude (Best reasoning)', value: 'claude' },
+        ],
+        default: 'groq',
+      },
+    ]);
+
+    // API Key based on provider
+    const apiKeyPrompts: Record<ProviderType, { message: string; key: keyof CLIConfig }> = {
+      groq: {
+        message: 'Groq API Key (get from https://console.groq.com/keys):',
+        key: 'groqApiKey',
+      },
+      openai: {
+        message: 'OpenAI API Key (get from https://platform.openai.com/api-keys):',
+        key: 'openaiApiKey',
+      },
+      claude: {
+        message: 'Claude API Key (get from https://console.anthropic.com/settings/keys):',
+        key: 'claudeApiKey',
+      },
+    };
+
+    const apiKeyConfig = apiKeyPrompts[provider as ProviderType];
+
     const answers = await inquirer.prompt([
       {
         type: 'password',
-        name: 'groqApiKey',
-        message: 'Groq API Key:',
+        name: 'apiKey',
+        message: apiKeyConfig.message,
         mask: '*',
       },
       {
         type: 'list',
         name: 'defaultModel',
         message: 'Default model:',
-        choices: [...AVAILABLE_MODELS],
-        default: 'llama-3.3-70b-versatile',
+        choices: AVAILABLE_MODELS_BY_PROVIDER[provider as ProviderType],
+        default: DEFAULT_MODELS[provider as ProviderType],
       },
       {
         type: 'confirm',
@@ -124,14 +165,16 @@ configCommand
       },
     ]);
 
-    for (const [key, value] of Object.entries(answers)) {
-      if (value !== undefined && value !== '') {
-        setConfig(key as keyof CLIConfig, value as CLIConfig[keyof CLIConfig]);
-      }
-    }
+    // Save config
+    setConfig('defaultProvider', provider);
+    setConfig(apiKeyConfig.key, answers.apiKey);
+    setConfig('defaultModel', answers.defaultModel);
+    setConfig('enableTools', answers.enableTools);
+    setConfig('autoApprove', answers.autoApprove);
 
     console.log(chalk.green('\n✓ Configuration saved!'));
     console.log(chalk.gray(`Config file: ${getConfigPath()}`));
+    console.log(chalk.cyan(`\nYou can now start chatting with: ${chalk.bold('ue-bot chat')}`));
   });
 
 // Reset config
