@@ -4,7 +4,7 @@
 
 import { createServer, Server as HttpServer } from 'http';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import { ESP32Handler } from '../handlers/esp32.handler';
 import {
   BINARY_HEADER_SIZE,

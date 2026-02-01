@@ -3,11 +3,11 @@
  * Supports tool execution, streaming, and approval flow
  */
 
+import { Agent, ToolRegistry } from '@ue-bot/agent-core';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { createInterface } from 'readline';
 import ora from 'ora';
-import { Agent, ToolRegistry } from '@ue-bot/agent-core';
+import { createInterface } from 'readline';
 import {
   createAgent,
   executeWithStream,
@@ -82,7 +82,9 @@ async function startInteractiveChat(options: ChatOptions): Promise<void> {
   printBanner();
   console.log(chalk.gray('Type your message and press Enter.'));
   console.log(chalk.gray('Commands: /help, /clear, /tools, /exit'));
-  console.log(chalk.cyan('🛠️  Tool execution is enabled. Ask me to open URLs, search web, read files, etc.'));
+  console.log(
+    chalk.cyan('🛠️  Tool execution is enabled. Ask me to open URLs, search web, read files, etc.')
+  );
   console.log();
 
   const rl = createInterface({
@@ -131,7 +133,11 @@ async function startInteractiveChat(options: ChatOptions): Promise<void> {
           if (spinner.isSpinning) spinner.stop();
 
           console.log(chalk.yellow(`\n🔧 Tool: ${toolCall.name}`));
-          console.log(chalk.gray(`   Args: ${JSON.stringify(toolCall.args, null, 2).split('\n').join('\n        ')}`));
+          console.log(
+            chalk.gray(
+              `   Args: ${JSON.stringify(toolCall.args, null, 2).split('\n').join('\n        ')}`
+            )
+          );
 
           // Auto-approve or ask for confirmation
           if (options.autoApprove) {

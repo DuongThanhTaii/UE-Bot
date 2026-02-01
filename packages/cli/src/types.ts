@@ -2,9 +2,13 @@
  * CLI Configuration Interface
  */
 export interface CLIConfig {
+  // Provider settings
+  defaultProvider: ProviderType;
+
   // API Keys
   groqApiKey?: string;
   openaiApiKey?: string;
+  claudeApiKey?: string;
   braveApiKey?: string;
 
   // Default settings
@@ -32,9 +36,15 @@ export interface CLIConfig {
 }
 
 /**
+ * Provider types
+ */
+export type ProviderType = 'groq' | 'openai' | 'claude';
+
+/**
  * Default configuration values
  */
 export const DEFAULT_CONFIG: CLIConfig = {
+  defaultProvider: 'groq',
   defaultModel: 'llama-3.3-70b-versatile',
   maxTokens: 4096,
   temperature: 0.7,
@@ -92,7 +102,45 @@ export interface RunOptions {
 }
 
 /**
- * Available Groq models
+ * Available models per provider
+ */
+export const AVAILABLE_MODELS_BY_PROVIDER: Record<ProviderType, string[]> = {
+  groq: [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-70b-versatile',
+    'llama-3.1-8b-instant',
+    'mixtral-8x7b-32768',
+    'gemma2-9b-it',
+  ],
+  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'],
+  claude: [
+    'claude-sonnet-4-20250514',
+    'claude-3-5-sonnet-20241022',
+    'claude-3-5-haiku-20241022',
+    'claude-3-opus-20240229',
+  ],
+};
+
+/**
+ * Default models per provider
+ */
+export const DEFAULT_MODELS: Record<ProviderType, string> = {
+  groq: 'llama-3.3-70b-versatile',
+  openai: 'gpt-4o-mini',
+  claude: 'claude-sonnet-4-20250514',
+};
+
+/**
+ * Provider display names
+ */
+export const PROVIDER_NAMES: Record<ProviderType, string> = {
+  groq: 'Groq (Free)',
+  openai: 'OpenAI',
+  claude: 'Anthropic Claude',
+};
+
+/**
+ * Available Groq models (legacy, for backward compatibility)
  */
 export const AVAILABLE_MODELS = [
   'llama-3.3-70b-versatile',

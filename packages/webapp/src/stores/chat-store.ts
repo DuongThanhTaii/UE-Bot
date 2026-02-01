@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useSettingsStore } from './settings-store';
 
 export interface Message {
   id: string;
@@ -39,7 +40,14 @@ export const useChatStore = create<ChatState>()(
         }));
 
         try {
-          // Call our API route that connects to Groq
+          // Get provider settings
+          const { provider } = useSettingsStore.getState();
+
+          if (!provider?.apiKey) {
+            throw new Error('API key not configured. Please set up your API key in Settings.');
+          }
+
+          // Call our API route with provider settings
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -50,15 +58,18 @@ export const useChatStore = create<ChatState>()(
                 role: m.role,
                 content: m.content,
               })),
+              provider: provider.type,
+              apiKey: provider.apiKey,
+              model: provider.model,
             }),
           });
 
           if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to get response');
+            const errorData = (await response.json()) as { error?: string };
+            throw new Error(errorData.error ?? 'Failed to get response');
           }
 
-          const data = await response.json();
+          const data = (await response.json()) as { content: string };
 
           const assistantMessage: Message = {
             id: crypto.randomUUID(),

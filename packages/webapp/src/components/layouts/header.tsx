@@ -4,6 +4,7 @@ import { Bell, Bot, LogOut, Menu, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { SettingsModal } from '@/components/features/settings-modal';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -69,6 +70,8 @@ export function Header({ onMenuClick }: HeaderProps) {
             3
           </span>
         </Button>
+
+        <SettingsModal />
 
         <ThemeToggle />
 

@@ -5,14 +5,16 @@
 
 import {
   Agent,
-  ToolRegistry,
   GroqProvider,
+  InMemoryStore,
+  ToolRegistry,
+  buildSystemPrompt,
   createFsTools,
-  createRuntimeTools,
-  createWebTools,
   createMemoryTools,
   createOpenTools,
-  buildSystemPrompt,
+  createRuntimeTools,
+  createWebTools,
+  setMemoryStore,
 } from '@ue-bot/agent-core';
 
 /**
@@ -36,6 +38,10 @@ export interface ToolUsedInfo {
 
 // Store agents per user (session persistence)
 const userAgents = new Map<number, Agent>();
+
+// Initialize memory store (in-memory for Telegram)
+const memoryStore = new InMemoryStore();
+setMemoryStore(memoryStore);
 
 /**
  * Create a new agent with all tools

@@ -1,10 +1,9 @@
 import chalk from 'chalk';
 import { marked } from 'marked';
-import markedTerminal from 'marked-terminal';
+import { markedTerminal } from 'marked-terminal';
 
 // Configure marked for terminal output
 marked.use(
-  // @ts-expect-error - markedTerminal returns TerminalRenderer but marked.use expects MarkedExtension
   markedTerminal({
     code: chalk.bgGray.white,
     codespan: chalk.yellow,

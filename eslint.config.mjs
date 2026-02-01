@@ -20,6 +20,8 @@ export default tseslint.config(
       '*.config.js',
       '*.config.mjs',
       '*.config.cjs',
+      '*.config.ts',
+      '**/vitest.config.ts',
     ],
   },
 

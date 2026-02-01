@@ -5,18 +5,19 @@
 
 import 'dotenv/config';
 import { Bot, Context } from 'grammy';
+
 import {
-  getAgentForUser,
   clearUserAgent,
   executeMessage,
   formatToolsUsedMessage,
+  getAgentForUser,
   type TelegramAgentConfig,
 } from './agent.js';
 
 // Validate environment variables
-const TELEGRAM_BOT_TOKEN = process.env['TELEGRAM_BOT_TOKEN'];
-const GROQ_API_KEY = process.env['GROQ_API_KEY'];
-const BRAVE_API_KEY = process.env['BRAVE_SEARCH_API_KEY'];
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const BRAVE_API_KEY = process.env.BRAVE_SEARCH_API_KEY;
 
 if (!TELEGRAM_BOT_TOKEN) {
   throw new Error('TELEGRAM_BOT_TOKEN is required');
@@ -32,7 +33,7 @@ const bot = new Bot(TELEGRAM_BOT_TOKEN);
 // Agent configuration
 const agentConfig: TelegramAgentConfig = {
   apiKey: GROQ_API_KEY,
-  model: process.env['GROQ_MODEL'] ?? 'llama-3.3-70b-versatile',
+  model: process.env.GROQ_MODEL ?? 'llama-3.3-70b-versatile',
   braveApiKey: BRAVE_API_KEY,
   workingDirectory: process.cwd(),
 };
@@ -116,10 +117,9 @@ bot.command('help', async (ctx: Context) => {
 
 // Handle all text messages
 bot.on('message:text', async (ctx) => {
-  const from = ctx.from;
-  const userId = from?.id;
-  const ctxMessage = ctx.message;
-  const messageText = ctxMessage.text;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const userId = ctx.from?.id;
+  const messageText = ctx.message.text;
 
   if (!userId || !messageText) return;
 
@@ -172,24 +172,24 @@ bot.on('message:text', async (ctx) => {
 
     // Reply to user
     await ctx.reply(replyText, {
-      reply_to_message_id: ctxMessage.message_id,
+      reply_to_message_id: ctx.message.message_id,
       parse_mode: 'Markdown',
     });
-  } catch (error: unknown) {
-    const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`[User ${String(userId)}] Error:`, err.message);
+  } catch (error) {
+    const errMessage = error instanceof Error ? error.message : String(error);
+    console.error(`[User ${String(userId)}] Error:`, errMessage);
 
     let errorMessage = '❌ Xin lỗi, có lỗi xảy ra.';
 
-    if (err.message.includes('context') || err.message.includes('overflow')) {
+    if (errMessage.includes('context') || errMessage.includes('overflow')) {
       clearUserAgent(userId);
       errorMessage = '❌ Cuộc hội thoại quá dài. Đã reset, hãy thử lại!';
-    } else if (err.message.includes('rate')) {
+    } else if (errMessage.includes('rate')) {
       errorMessage = '⏳ Quá nhiều yêu cầu. Vui lòng đợi một chút.';
     }
 
     await ctx.reply(errorMessage, {
-      reply_to_message_id: ctxMessage.message_id,
+      reply_to_message_id: ctx.message.message_id,
     });
   }
 });

@@ -9,6 +9,7 @@ import { promisify } from 'util';
 
 import { z } from 'zod';
 
+import { checkCommandSecurity, sanitizeInput } from '../security';
 import type { ToolContext } from '../types';
 
 import { BaseTool } from './base-tool';
@@ -46,7 +47,7 @@ export class ExecTool extends BaseTool {
     timeout: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .default(30000)
       .describe('Timeout in milliseconds (default: 30s)'),
     env: z.record(z.string()).optional().describe('Additional environment variables'),
@@ -58,8 +59,25 @@ export class ExecTool extends BaseTool {
   ): Promise<ExecResult> {
     const startTime = Date.now();
 
+    // Security check
+    const sanitizedCommand = sanitizeInput(params.command);
+    const security = checkCommandSecurity(sanitizedCommand);
+
+    if (!security.allowed) {
+      throw new Error(
+        `🚫 BLOCKED: This command is not allowed for security reasons.\n` +
+        `Reason: ${security.reason}\n` +
+        `If you believe this is a mistake, please contact the administrator.`
+      );
+    }
+
+    if (security.requiresApproval) {
+      // Log warning but allow (approval system will handle)
+      console.warn(`[SECURITY WARNING] ${security.reason}`);
+    }
+
     try {
-      const { stdout, stderr } = await execAsync(params.command, {
+      const { stdout, stderr } = await execAsync(sanitizedCommand, {
         cwd: context.workingDirectory,
         timeout: params.timeout,
         maxBuffer: MAX_OUTPUT_SIZE,
@@ -125,7 +143,7 @@ export class BashTool extends BaseTool {
     timeout: z
       .number()
       .int()
-      .positive()
+      .min(1)
       .default(60000)
       .describe('Timeout in milliseconds (default: 60s)'),
   });
@@ -375,7 +393,7 @@ export class NodeTool extends BaseTool {
 
   parameters = z.object({
     code: z.string().describe('JavaScript/TypeScript code to execute'),
-    timeout: z.number().int().positive().default(30000).describe('Timeout in milliseconds'),
+    timeout: z.number().int().min(1).default(30000).describe('Timeout in milliseconds'),
   });
 
   protected async execute(

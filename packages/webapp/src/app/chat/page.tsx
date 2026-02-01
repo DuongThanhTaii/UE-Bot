@@ -3,6 +3,7 @@
 import { Bot, Loader2, Mic, MicOff, Send, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { ApiKeyWarning } from '@/components/features/api-key-warning';
 import { DashboardLayout } from '@/components/layouts/dashboard-layout';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,9 +12,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { useChatStore, type Message } from '@/stores/chat-store';
+import { useSettingsStore } from '@/stores/settings-store';
 
 export default function ChatPage() {
   const { messages, isLoading, sendMessage } = useChatStore();
+  const { isConfigured } = useSettingsStore();
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -36,7 +39,7 @@ export default function ChatPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !isConfigured) return;
 
     const message = input.trim();
     setInput('');
@@ -58,6 +61,9 @@ export default function ChatPage() {
   return (
     <DashboardLayout>
       <div className="flex h-[calc(100vh-8rem)] flex-col">
+        {/* API Key Warning */}
+        <ApiKeyWarning />
+
         {/* Chat Header */}
         <div className="flex items-center justify-between border-b pb-4">
           <div className="flex items-center gap-3">
