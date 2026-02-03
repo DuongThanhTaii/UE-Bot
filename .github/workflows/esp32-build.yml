@@ -63,7 +63,7 @@ jobs:
           path: firmware
 
       - name: Create firmware release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: firmware/**/*.bin
           tag_name: ${{ github.ref_name }}
