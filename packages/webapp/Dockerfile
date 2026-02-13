@@ -1,7 +1,7 @@
 # ============================================
 # Stage 1: Dependencies
 # ============================================
-FROM node:22-alpine AS deps
+FROM node:25-alpine AS deps
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
@@ -19,7 +19,7 @@ RUN pnpm install --frozen-lockfile
 # ============================================
 # Stage 2: Builder
 # ============================================
-FROM node:22-alpine AS builder
+FROM node:25-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -43,7 +43,7 @@ RUN pnpm --filter @ue-bot/webapp build
 # ============================================
 # Stage 3: Runner
 # ============================================
-FROM node:22-alpine AS runner
+FROM node:25-alpine AS runner
 
 WORKDIR /app
 
