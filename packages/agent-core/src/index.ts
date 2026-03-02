@@ -68,9 +68,9 @@ export type { ApprovalRule } from './approval/checker';
 // Security
 export {
   BLOCKED_COMMANDS,
-  Security,
   SENSITIVE_PATHS,
   SUSPICIOUS_COMMANDS,
+  Security,
   checkCommandSecurity,
   checkPathSecurity,
   isBlockedCommand,

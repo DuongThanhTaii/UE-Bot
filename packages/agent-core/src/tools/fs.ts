@@ -79,16 +79,16 @@ export class ReadTool extends BaseTool {
     if (!security.allowed && !security.requiresApproval) {
       throw new Error(
         `🚫 BLOCKED: Cannot read this file for security reasons.\n` +
-        `Reason: ${security.reason}\n` +
-        `This file may contain sensitive information (passwords, keys, credentials).`
+          `Reason: ${security.reason}\n` +
+          `This file may contain sensitive information (passwords, keys, credentials).`
       );
     }
 
     if (security.severity === 'danger') {
       throw new Error(
         `⚠️ SENSITIVE FILE: Reading "${params.path}" is not allowed.\n` +
-        `Reason: ${security.reason}\n` +
-        `This file may contain sensitive credentials or personal data.`
+          `Reason: ${security.reason}\n` +
+          `This file may contain sensitive credentials or personal data.`
       );
     }
 
@@ -164,8 +164,8 @@ export class WriteTool extends BaseTool {
     if (security.severity === 'danger' || security.severity === 'blocked') {
       throw new Error(
         `🚫 BLOCKED: Cannot write to this file for security reasons.\n` +
-        `Reason: ${security.reason}\n` +
-        `Writing to sensitive files is not allowed.`
+          `Reason: ${security.reason}\n` +
+          `Writing to sensitive files is not allowed.`
       );
     }
 

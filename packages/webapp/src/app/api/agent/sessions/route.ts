@@ -5,16 +5,19 @@
 
 import { FileSessionStore, SessionManager } from '@ue-bot/agent-core';
 import { NextRequest } from 'next/server';
+import * as os from 'os';
 import * as path from 'path';
+
+// Shared data directory - same as CLI and Telegram
+const SHARED_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), '.ue-bot', 'data');
 
 // Initialize session manager (singleton)
 let sessionManager: SessionManager | null = null;
 
 function getSessionManager(): SessionManager {
   if (!sessionManager) {
-    const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
     const store = new FileSessionStore({
-      directory: path.join(dataDir, 'sessions'),
+      directory: path.join(SHARED_DATA_DIR, 'sessions'),
     });
 
     sessionManager = new SessionManager({

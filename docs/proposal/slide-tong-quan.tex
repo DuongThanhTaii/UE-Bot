@@ -1,0 +1,771 @@
+\documentclass[aspectratio=169,12pt]{beamer}
+
+% ============================================================================
+% THEME & PACKAGES
+% ============================================================================
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{fontawesome5}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pgfgantt}
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds, decorations.pathreplacing}
+
+% Colors
+\definecolor{primaryblue}{RGB}{0, 102, 204}
+\definecolor{secondarygreen}{RGB}{0, 153, 76}
+\definecolor{warningorange}{RGB}{255, 153, 0}
+\definecolor{dangerred}{RGB}{220, 53, 69}
+\definecolor{lightbg}{RGB}{248, 249, 250}
+\definecolor{darkbg}{RGB}{33, 37, 41}
+\definecolor{codebg}{RGB}{40, 44, 52}
+
+% Beamer settings
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{title}{fg=primaryblue}
+\setbeamercolor{frametitle}{fg=primaryblue}
+\setbeamerfont{title}{size=\Large, series=\bfseries}
+\setbeamerfont{frametitle}{size=\large, series=\bfseries}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{blue!80},
+    stringstyle=\color{orange!80},
+    frame=single,
+    rulecolor=\color{gray!30},
+    breaklines=true,
+    showstringspaces=false,
+}
+
+% ============================================================================
+% TITLE PAGE INFO
+% ============================================================================
+\title[UE-Bot]{%
+    \textbf{UE-Bot}\\[0.3cm]
+    \large AI Assistant Platform\\
+    với Web Dashboard \& ESP32 Voice Control
+}
+\subtitle{Báo cáo tiến độ dự án}
+\author{%
+    % ĐIỀN TÊN NHÓM VÀO ĐÂY
+    Nhóm: \underline{\hspace{3cm}}
+}
+\institute{%
+    Trường Đại học Sư phạm TP.HCM\\
+    Khoa Công nghệ Thông tin
+}
+\date{Tháng 3/2026}
+
+% ============================================================================
+% DOCUMENT
+% ============================================================================
+\begin{document}
+
+% ----------------------------------------------------------------------------
+% SLIDE 1: TRANG BÌA
+% ----------------------------------------------------------------------------
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% ----------------------------------------------------------------------------
+% SLIDE 2: NỘI DUNG TRÌNH BÀY
+% ----------------------------------------------------------------------------
+\begin{frame}{Nội dung trình bày}
+    \tableofcontents
+\end{frame}
+
+% ============================================================================
+\section{Giới thiệu đề tài}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 3: TÊN ĐỀ TÀI
+% ----------------------------------------------------------------------------
+\begin{frame}{Tên đề tài}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[
+                rectangle, rounded corners=10pt,
+                draw=primaryblue, line width=2pt,
+                fill=primaryblue!5,
+                text width=13cm, align=center,
+                inner sep=15pt
+            ] {
+                {\Huge\bfseries\color{primaryblue} UE-Bot}\\[0.5cm]
+                {\large AI Assistant Platform}\\[0.2cm]
+                {\normalsize với Web Dashboard và Điều khiển Giọng nói ESP32}
+            };
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \textbf{\faIcon{bullseye} Mục tiêu:}
+            \begin{itemize}
+                \item Trợ lý AI đa nền tảng
+                \item Mã nguồn mở, miễn phí
+                \item Tích hợp IoT (ESP32)
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{\faIcon{code-branch} Repository:}\\
+            \url{github.com/DuongThanhTaii/UE-Bot}\\[0.3cm]
+            \textbf{\faIcon{layer-group} Tech Stack:}\\
+            TypeScript, Next.js, Node.js, ESP32
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+\section{Vấn đề thực tế}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 4: VẤN ĐỀ THỰC TẾ
+% ----------------------------------------------------------------------------
+\begin{frame}{Vấn đề thực tế cần giải quyết}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\color{dangerred}\faIcon{exclamation-triangle} Vấn đề 1:}\\
+            \textit{AI chỉ trả lời, không hành động}
+            \begin{itemize}
+                \item ChatGPT chỉ chat, không thực thi
+                \item Không đọc/ghi file, chạy code
+                \item Không điều khiển thiết bị
+            \end{itemize}
+
+            \vspace{0.5cm}
+
+            \textbf{\color{dangerred}\faIcon{exclamation-triangle} Vấn đề 2:}\\
+            \textit{Chi phí cao, khó tùy chỉnh}
+            \begin{itemize}
+                \item API trả phí (GPT-4, Claude)
+                \item Không có mã nguồn mở
+                \item Khó tích hợp vào hệ thống riêng
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{\color{dangerred}\faIcon{exclamation-triangle} Vấn đề 3:}\\
+            \textit{AI và IoT chưa kết nối}
+            \begin{itemize}
+                \item Alexa/Google Home đắt, đóng
+                \item Khó tùy chỉnh commands
+                \item Thiếu giải pháp tại VN
+            \end{itemize}
+
+            \vspace{0.5cm}
+
+            \textbf{\color{dangerred}\faIcon{exclamation-triangle} Vấn đề 4:}\\
+            \textit{Thiếu đa nền tảng}
+            \begin{itemize}
+                \item Cần dùng Web + CLI + Mobile
+                \item Không có giải pháp thống nhất
+                \item Tool riêng cho developer thiếu
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+\section{Mục tiêu sản phẩm}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 5: MỤC TIÊU
+% ----------------------------------------------------------------------------
+\begin{frame}{Mục tiêu sản phẩm}
+    \begin{center}
+        \begin{tikzpicture}[
+            goal/.style={rectangle, rounded corners=5pt, draw=primaryblue, fill=primaryblue!10,
+                         text width=4.5cm, minimum height=1.5cm, align=center, font=\small},
+            done/.style={goal, draw=secondarygreen, fill=secondarygreen!10},
+        ]
+            % Row 1
+            \node[done] (g1) at (0,0) {\faIcon{check-circle}~\textbf{Agent Core}\\Tool System hoàn chỉnh};
+            \node[done] (g2) at (5.5,0) {\faIcon{check-circle}~\textbf{Web Dashboard}\\Chat UI + Settings};
+            \node[done] (g3) at (11,0) {\faIcon{check-circle}~\textbf{Multi-Provider}\\Groq/OpenAI/Claude};
+
+            % Row 2
+            \node[done] (g4) at (0,-2.5) {\faIcon{check-circle}~\textbf{CLI Tool}\\Interactive terminal};
+            \node[done] (g5) at (5.5,-2.5) {\faIcon{check-circle}~\textbf{Telegram Bot}\\Messaging platform};
+            \node[goal] (g6) at (11,-2.5) {\faIcon{clock}~\textbf{ESP32 Voice}\\IoT voice control};
+
+            % Row 3
+            \node[done] (g7) at (0,-5) {\faIcon{check-circle}~\textbf{Security}\\Chặn lệnh nguy hiểm};
+            \node[done] (g8) at (5.5,-5) {\faIcon{check-circle}~\textbf{121 Tests}\\Unit + Integration};
+            \node[done] (g9) at (11,-5) {\faIcon{check-circle}~\textbf{Docker}\\Deploy ready};
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{0.3cm}
+    \begin{center}
+        \colorbox{secondarygreen!15}{\color{secondarygreen}\textbf{8/9 mục tiêu đã hoàn thành}} \quad
+        \colorbox{warningorange!15}{\color{warningorange}\textbf{1/9 đang phát triển (ESP32)}}
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Công nghệ sử dụng}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 6: TECH STACK
+% ----------------------------------------------------------------------------
+\begin{frame}{Công nghệ sử dụng}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{server} Backend \& Core}
+            \begin{tabular}{ll}
+                \toprule
+                Công nghệ & Vai trò \\
+                \midrule
+                Node.js 22 & Runtime \\
+                TypeScript & Ngôn ngữ \\
+                Zod & Validation \\
+                pnpm & Package manager \\
+                Vitest & Testing \\
+                \bottomrule
+            \end{tabular}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{brain} AI / LLM}
+            \begin{tabular}{ll}
+                \toprule
+                Provider & Ghi chú \\
+                \midrule
+                Groq & Miễn phí \\
+                OpenAI & Tool calling tốt \\
+                Claude & Context lớn \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{desktop} Frontend}
+            \begin{tabular}{ll}
+                \toprule
+                Công nghệ & Vai trò \\
+                \midrule
+                Next.js 14 & Web framework \\
+                Tailwind CSS & Styling \\
+                Shadcn/UI & Components \\
+                Zustand & State \\
+                \bottomrule
+            \end{tabular}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{tools} Khác}
+            \begin{tabular}{ll}
+                \toprule
+                Công nghệ & Vai trò \\
+                \midrule
+                Commander.js & CLI \\
+                grammY & Telegram Bot \\
+                Docker & Deployment \\
+                GitHub Actions & CI/CD \\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+\section{Kiến trúc hệ thống}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 7: ARCHITECTURE
+% ----------------------------------------------------------------------------
+\begin{frame}{Kiến trúc tổng thể}
+    \begin{center}
+        \begin{tikzpicture}[
+            node distance=1.2cm,
+            box/.style={rectangle, rounded corners=5pt, draw=#1, fill=#1!10,
+                        text width=2.5cm, minimum height=1cm, align=center,
+                        font=\small\bfseries, line width=1pt},
+            box/.default=primaryblue,
+            arrow/.style={-{Stealth[length=3mm]}, thick, color=gray!70},
+            label/.style={font=\tiny\color{gray}},
+        ]
+            % LLM Layer
+            \node[box=warningorange] (groq) at (0, 3) {Groq\\(Free)};
+            \node[box=warningorange] (openai) at (3, 3) {OpenAI\\(GPT-4)};
+            \node[box=warningorange] (claude) at (6, 3) {Claude\\(Anthropic)};
+
+            % Provider Factory
+            \node[box=primaryblue, text width=8.5cm] (factory) at (3, 1.5) {Provider Factory + Agent Core};
+
+            % Tool System
+            \node[box=secondarygreen, text width=1.8cm, minimum height=0.7cm] (fs) at (-0.5, 0) {\tiny File I/O};
+            \node[box=secondarygreen, text width=1.8cm, minimum height=0.7cm] (exec) at (1.5, 0) {\tiny Shell/Exec};
+            \node[box=secondarygreen, text width=1.8cm, minimum height=0.7cm] (web) at (3.5, 0) {\tiny Web Search};
+            \node[box=secondarygreen, text width=1.8cm, minimum height=0.7cm] (mem) at (5.5, 0) {\tiny Memory};
+            \node[box=dangerred, text width=1.8cm, minimum height=0.7cm] (sec) at (7.5, 0) {\tiny Security};
+
+            % Clients
+            \node[box=primaryblue] (webui) at (0, -1.5) {Web\\Dashboard};
+            \node[box=primaryblue] (cli) at (3, -1.5) {CLI\\Terminal};
+            \node[box=primaryblue] (tele) at (6, -1.5) {Telegram\\Bot};
+            \node[box=gray, dashed] (esp) at (9, -1.5) {ESP32\\(Planned)};
+
+            % Arrows
+            \draw[arrow] (groq) -- (factory);
+            \draw[arrow] (openai) -- (factory);
+            \draw[arrow] (claude) -- (factory);
+
+            \draw[arrow] (factory) -- (fs);
+            \draw[arrow] (factory) -- (exec);
+            \draw[arrow] (factory) -- (web);
+            \draw[arrow] (factory) -- (mem);
+            \draw[arrow] (factory) -- (sec);
+
+            \draw[arrow] (factory) -- (webui);
+            \draw[arrow] (factory) -- (cli);
+            \draw[arrow] (factory) -- (tele);
+            \draw[arrow, dashed] (factory) -- (esp);
+
+            % Labels
+            \node[label, above=0.1cm of factory] {Multi-Provider Support};
+            \node[label] at (3.5, -0.5) {Tool System (7 tools)};
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Sơ đồ Use-case}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 8: USE-CASE DIAGRAM
+% ----------------------------------------------------------------------------
+\begin{frame}{Use-case Diagram}
+    \begin{center}
+        \begin{tikzpicture}[
+            scale=0.85, transform shape,
+            actor/.style={font=\small},
+            usecase/.style={ellipse, draw=primaryblue, fill=primaryblue!5,
+                           text width=2.2cm, align=center, font=\scriptsize,
+                           minimum height=0.9cm},
+            arrow/.style={->, >=stealth, thin},
+            system/.style={rectangle, draw=gray, dashed, rounded corners=5pt,
+                          inner sep=8pt},
+        ]
+            % Actors
+            \node[actor] (user) at (-5.5, 0) {\includegraphics[width=0.6cm]{example-image}\\User};
+            \node[actor] (admin) at (-5.5, -4) {\includegraphics[width=0.6cm]{example-image}\\Admin};
+
+            % System boundary
+            \node[system, fit={(0,-5.5) (5.5,2.5)}, label={[font=\small\bfseries]above:UE-Bot System}] {};
+
+            % Use cases
+            \node[usecase] (uc1) at (1.5, 2) {Chat với AI};
+            \node[usecase] (uc2) at (5, 2) {Chọn LLM Provider};
+            \node[usecase] (uc3) at (1.5, 0.5) {Nhập API Key};
+            \node[usecase] (uc4) at (5, 0.5) {Thực thi lệnh\\(Tool Calling)};
+            \node[usecase] (uc5) at (1.5, -1) {Đọc/Ghi File};
+            \node[usecase] (uc6) at (5, -1) {Tìm kiếm Web};
+            \node[usecase] (uc7) at (1.5, -2.5) {Chat qua\\Telegram};
+            \node[usecase] (uc8) at (5, -2.5) {Chat qua CLI};
+            \node[usecase] (uc9) at (1.5, -4) {Quản lý Session};
+            \node[usecase] (uc10) at (5, -4) {Xem Memory};
+            \node[usecase, draw=dangerred, fill=dangerred!5] (uc11) at (3.2, -5.3) {Cấu hình\\bảo mật};
+
+            % User arrows
+            \draw[arrow] (user) -- (uc1);
+            \draw[arrow] (user) -- (uc3);
+            \draw[arrow] (user) -- (uc7);
+            \draw[arrow] (user) -- (uc8);
+
+            % Admin arrows
+            \draw[arrow] (admin) -- (uc9);
+            \draw[arrow] (admin) -- (uc11);
+
+            % Include/Extend
+            \draw[arrow, dashed] (uc1) -- node[above, font=\tiny] {include} (uc2);
+            \draw[arrow, dashed] (uc1) -- node[right, font=\tiny] {extend} (uc4);
+            \draw[arrow, dashed] (uc4) -- node[right, font=\tiny] {extend} (uc5);
+            \draw[arrow, dashed] (uc4) -- node[above, font=\tiny] {extend} (uc6);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Quá trình thực hiện}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 9: PHASES
+% ----------------------------------------------------------------------------
+\begin{frame}{Các giai đoạn thực hiện}
+    \begin{center}
+        \begin{tikzpicture}[
+            phase/.style={rectangle, rounded corners=5pt, draw=#1, fill=#1!10,
+                         text width=2.8cm, minimum height=1.8cm, align=center,
+                         font=\small, line width=1.5pt},
+            phase/.default=primaryblue,
+            arrow/.style={-{Stealth[length=3mm]}, very thick, color=gray!50},
+        ]
+            % Phase boxes
+            \node[phase=secondarygreen] (p1) at (0, 0) {
+                \textbf{Phase 1}\\[0.1cm]
+                \faIcon{check}~Foundation\\
+                {\tiny Monorepo, CI/CD}\\
+                {\tiny\color{secondarygreen}✅ Tuần 1-2}
+            };
+            \node[phase=secondarygreen] (p2) at (3.5, 0) {
+                \textbf{Phase 2}\\[0.1cm]
+                \faIcon{check}~Integration\\
+                {\tiny Web + Telegram}\\
+                {\tiny\color{secondarygreen}✅ Tuần 3-4}
+            };
+            \node[phase=secondarygreen] (p3) at (7, 0) {
+                \textbf{Phase 3}\\[0.1cm]
+                \faIcon{check}~Agent Core\\
+                {\tiny Tools + Security}\\
+                {\tiny\color{secondarygreen}✅ Tuần 5-8}
+            };
+            \node[phase=secondarygreen] (p4) at (10.5, 0) {
+                \textbf{Phase 4}\\[0.1cm]
+                \faIcon{check}~CLI\\
+                {\tiny Terminal tool}\\
+                {\tiny\color{secondarygreen}✅ Tuần 9}
+            };
+
+            % Row 2
+            \node[phase=warningorange] (p5) at (1.75, -2.8) {
+                \textbf{Phase 5}\\[0.1cm]
+                \faIcon{clock}~ESP32\\
+                {\tiny Voice Control}\\
+                {\tiny\color{warningorange}⏳ Tuần 10-11}
+            };
+            \node[phase=secondarygreen] (p6) at (5.25, -2.8) {
+                \textbf{Phase 7}\\[0.1cm]
+                \faIcon{check}~Testing\\
+                {\tiny 121 tests pass}\\
+                {\tiny\color{secondarygreen}✅ Tuần 13}
+            };
+            \node[phase=secondarygreen] (p7) at (8.75, -2.8) {
+                \textbf{Phase 8}\\[0.1cm]
+                \faIcon{check}~Deploy\\
+                {\tiny Docker ready}\\
+                {\tiny\color{secondarygreen}✅ Tuần 14}
+            };
+
+            % Arrows
+            \draw[arrow] (p1) -- (p2);
+            \draw[arrow] (p2) -- (p3);
+            \draw[arrow] (p3) -- (p4);
+            \draw[arrow] (p4) -- (p5);
+            \draw[arrow] (p5) -- (p6);
+            \draw[arrow] (p6) -- (p7);
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% ----------------------------------------------------------------------------
+% SLIDE 10: GANTT CHART
+% ----------------------------------------------------------------------------
+\begin{frame}{Timeline - Gantt Chart}
+    \begin{center}
+        \resizebox{0.95\textwidth}{!}{%
+        \begin{ganttchart}[
+            hgrid,
+            vgrid,
+            x unit=0.55cm,
+            y unit chart=0.5cm,
+            title height=1,
+            bar height=0.5,
+            bar/.append style={fill=secondarygreen},
+            bar incomplete/.append style={fill=warningorange!50},
+            group/.append style={fill=primaryblue!70},
+            title label font=\tiny,
+            bar label font=\tiny,
+            group label font=\tiny\bfseries,
+        ]{1}{16}
+            \gantttitle{Th.1}{4}
+            \gantttitle{Th.2}{4}
+            \gantttitle{Th.3}{4}
+            \gantttitle{Th.4}{4} \\
+            \gantttitlelist{1,...,16}{1} \\
+
+            \ganttgroup{Phase 1: Setup}{1}{2} \\
+            \ganttbar{Monorepo + CI/CD}{1}{2} \\
+
+            \ganttgroup{Phase 2: Web+Tele}{3}{4} \\
+            \ganttbar{Dashboard + Chat}{3}{4} \\
+
+            \ganttgroup{Phase 3: Agent}{5}{8} \\
+            \ganttbar{Tools + Security}{5}{8} \\
+
+            \ganttgroup{Phase 4: CLI}{9}{9} \\
+            \ganttbar{CLI Tool}{9}{9} \\
+
+            \ganttgroup{Phase 5: ESP32}{10}{11} \\
+            \ganttbar[bar incomplete/.append style={fill=warningorange!50}]{Voice Control}{10}{11} \\
+
+            \ganttgroup{Phase 7: Test}{12}{13} \\
+            \ganttbar{121 Unit Tests}{12}{13} \\
+
+            \ganttgroup{Phase 8: Deploy}{14}{16} \\
+            \ganttbar{Docker + Docs}{14}{16} \\
+
+            \ganttmilestone{Demo}{10}
+            \ganttmilestone{Release}{16}
+        \end{ganttchart}
+        }%
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Kết quả đã đạt được}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 11: THỐNG KÊ
+% ----------------------------------------------------------------------------
+\begin{frame}{Kết quả đạt được - Thống kê}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{code} Code Statistics}
+            \begin{itemize}
+                \item \textbf{6 packages}: agent-core, webapp, cli, telegram-bot, bridge-service, shared
+                \item \textbf{82+ tasks} đã track
+                \item \textbf{121 unit tests} passing
+                \item \textbf{4 CI/CD workflows}
+                \item TypeScript strict mode
+            \end{itemize}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{shield-alt} Bảo mật}
+            \begin{itemize}
+                \item Chặn \texttt{format}, \texttt{rm -rf /}
+                \item Chặn đọc \texttt{.env}, \texttt{.ssh/}
+                \item Chặn reverse shells
+                \item Cảnh báo \texttt{sudo}, \texttt{curl}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{tools} Tools đã implement}
+            \begin{tabular}{ll}
+                \toprule
+                Tool & Chức năng \\
+                \midrule
+                \texttt{read} & Đọc file \\
+                \texttt{write} & Ghi file \\
+                \texttt{exec} & Shell command \\
+                \texttt{bash} & Multi-line script \\
+                \texttt{open} & Mở URL \\
+                \texttt{web\_search} & Tìm kiếm web \\
+                \texttt{memory\_*} & Lưu/tìm nhớ \\
+                \bottomrule
+            \end{tabular}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{cloud} Deployment}
+            \begin{itemize}
+                \item Docker Compose ready
+                \item GitHub Actions CI/CD
+                \item Multi-platform support
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+\section{Demo sản phẩm}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 12: DEMO GUIDE
+% ----------------------------------------------------------------------------
+\begin{frame}{Demo sản phẩm}
+    \begin{center}
+        \textbf{\Large \faIcon{laptop-code} Demo trực tiếp}
+    \end{center}
+
+    \vspace{0.3cm}
+
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{globe} 1. Web Dashboard}
+            \begin{enumerate}
+                \item Mở \texttt{localhost:3000}
+                \item Settings $\rightarrow$ Nhập API Key
+                \item Chat với AI
+                \item Yêu cầu AI đọc/ghi file
+            \end{enumerate}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{terminal} 2. CLI Tool}
+            \begin{enumerate}
+                \item \texttt{config setup} (chọn provider)
+                \item \texttt{chat} (interactive mode)
+                \item Yêu cầu chạy shell command
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{\faIcon{paper-plane} 3. Telegram Bot}
+            \begin{enumerate}
+                \item Mở bot trên Telegram
+                \item Gửi tin nhắn
+                \item Bot trả lời + sử dụng tools
+            \end{enumerate}
+
+            \vspace{0.5cm}
+
+            \textbf{\faIcon{shield-alt} 4. Security Demo}
+            \begin{enumerate}
+                \item Yêu cầu ``format ổ C:''
+                \item $\rightarrow$ \textcolor{dangerred}{\textbf{BLOCKED!}}
+                \item Yêu cầu ``đọc .env''
+                \item $\rightarrow$ \textcolor{dangerred}{\textbf{BLOCKED!}}
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.5cm}
+    \begin{center}
+        \colorbox{primaryblue!10}{
+            \textbf{Lệnh khởi động:}
+            \texttt{pnpm dev:webapp} ~|~
+            \texttt{pnpm dev:cli} ~|~
+            \texttt{pnpm dev:telegram}
+        }
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Phân công nhóm}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 13: PHÂN CÔNG
+% ----------------------------------------------------------------------------
+\begin{frame}{Phân công vai trò}
+    \begin{center}
+        \begin{tabular}{|c|l|l|l|}
+            \hline
+            \textbf{STT} & \textbf{Họ tên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} \\
+            \hline
+            1 & \underline{\hspace{2.5cm}} & Team Leader &
+            \begin{tabular}[t]{@{}l@{}}
+                Quản lý tiến độ\\
+                Code review, Architect
+            \end{tabular} \\
+            \hline
+            2 & \underline{\hspace{2.5cm}} & Backend Dev &
+            \begin{tabular}[t]{@{}l@{}}
+                Agent Core\\
+                Tools + Security
+            \end{tabular} \\
+            \hline
+            3 & \underline{\hspace{2.5cm}} & Frontend Dev &
+            \begin{tabular}[t]{@{}l@{}}
+                Web Dashboard\\
+                UI/UX Design
+            \end{tabular} \\
+            \hline
+            4 & \underline{\hspace{2.5cm}} & Integration &
+            \begin{tabular}[t]{@{}l@{}}
+                CLI + Telegram Bot\\
+                ESP32 firmware
+            \end{tabular} \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+        \textbf{Công cụ quản lý:} GitHub Issues + PROJECT\_PLAN.md (82 tasks tracked)
+    \end{center}
+\end{frame}
+
+% ============================================================================
+\section{Kết luận}
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% SLIDE 14: KẾT LUẬN
+% ----------------------------------------------------------------------------
+\begin{frame}{Kết luận \& Hướng phát triển}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{\color{secondarygreen}\faIcon{check-circle} Đã hoàn thành:}
+            \begin{itemize}
+                \item[$\checkmark$] Agent Core + 7 tools
+                \item[$\checkmark$] Web Dashboard (Next.js)
+                \item[$\checkmark$] CLI Interface
+                \item[$\checkmark$] Telegram Bot
+                \item[$\checkmark$] Multi-Provider (Groq/OpenAI/Claude)
+                \item[$\checkmark$] Security Module
+                \item[$\checkmark$] 121 Unit Tests
+                \item[$\checkmark$] Docker Deployment
+                \item[$\checkmark$] CI/CD (GitHub Actions)
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{\color{warningorange}\faIcon{arrow-right} Tiếp theo:}
+            \begin{itemize}
+                \item ESP32 Voice Control
+                \item Speech-to-Text (Whisper)
+                \item Text-to-Speech (ElevenLabs)
+                \item Deploy production server
+                \item Thêm tools (email, calendar)
+            \end{itemize}
+
+            \vspace{0.5cm}
+
+            \textbf{\color{primaryblue}\faIcon{star} Điểm nổi bật:}
+            \begin{itemize}
+                \item Mã nguồn mở, miễn phí
+                \item Hỗ trợ tiếng Việt
+                \item Có hệ thống bảo mật
+                \item Đa nền tảng
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% ----------------------------------------------------------------------------
+% SLIDE 15: CẢM ƠN
+% ----------------------------------------------------------------------------
+\begin{frame}[plain]
+    \begin{center}
+        \vspace{2cm}
+        {\Huge\bfseries\color{primaryblue} Cảm ơn thầy/cô và các bạn!}
+
+        \vspace{1.5cm}
+
+        {\Large\faIcon{question-circle}~Phần hỏi đáp}
+
+        \vspace{1.5cm}
+
+        {\large
+            \faIcon{github}~\url{github.com/DuongThanhTaii/UE-Bot}
+        }
+    \end{center}
+\end{frame}
+
+\end{document}

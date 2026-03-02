@@ -6,7 +6,7 @@
 import {
   Agent,
   GroqProvider,
-  InMemoryStore,
+  SQLiteMemoryStore,
   ToolRegistry,
   buildSystemPrompt,
   createFsTools,
@@ -16,6 +16,8 @@ import {
   createWebTools,
   setMemoryStore,
 } from '@ue-bot/agent-core';
+import * as os from 'os';
+import * as path from 'path';
 
 /**
  * Configuration for creating Telegram agent
@@ -39,9 +41,17 @@ export interface ToolUsedInfo {
 // Store agents per user (session persistence)
 const userAgents = new Map<number, Agent>();
 
-// Initialize memory store (in-memory for Telegram)
-const memoryStore = new InMemoryStore();
-setMemoryStore(memoryStore);
+// Initialize shared memory store (SQLite for cross-platform sync with CLI & Web)
+try {
+  const dataDir = process.env['DATA_DIR'] || path.join(os.homedir(), '.ue-bot', 'data');
+  const memoryStore = new SQLiteMemoryStore({
+    dbPath: path.join(dataDir, 'memory.db'),
+  });
+  setMemoryStore(memoryStore);
+  console.log(`📦 Memory store: ${path.join(dataDir, 'memory.db')}`);
+} catch {
+  console.warn('⚠️  SQLite memory unavailable, using in-memory store');
+}
 
 /**
  * Create a new agent with all tools

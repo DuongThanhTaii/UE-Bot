@@ -66,8 +66,8 @@ export class ExecTool extends BaseTool {
     if (!security.allowed) {
       throw new Error(
         `🚫 BLOCKED: This command is not allowed for security reasons.\n` +
-        `Reason: ${security.reason}\n` +
-        `If you believe this is a mistake, please contact the administrator.`
+          `Reason: ${security.reason}\n` +
+          `If you believe this is a mistake, please contact the administrator.`
       );
     }
 

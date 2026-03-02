@@ -1,0 +1,613 @@
+\documentclass[12pt,a4paper]{article}
+
+% ============================================================================
+% PACKAGES
+% ============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfgantt}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{float}
+
+% TikZ libraries
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc, fit, backgrounds}
+
+% ============================================================================
+% SETTINGS
+% ============================================================================
+\geometry{left=2.5cm, right=2cm, top=2cm, bottom=2cm}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+% Colors
+\definecolor{primaryblue}{RGB}{0, 102, 204}
+\definecolor{secondarygreen}{RGB}{0, 153, 76}
+\definecolor{warningorange}{RGB}{255, 153, 0}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{UE-Bot - AI Assistant Platform}
+\lhead{Đề cương đề tài}
+\cfoot{\thepage}
+
+% Title formatting
+\titleformat{\section}{\Large\bfseries\color{primaryblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{secondarygreen}}{\thesubsection}{1em}{}
+
+% ============================================================================
+% DOCUMENT
+% ============================================================================
+\begin{document}
+
+% ----------------------------------------------------------------------------
+% TRANG BÌA
+% ----------------------------------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    % Logo trường (nếu có)
+    % \includegraphics[width=0.3\textwidth]{logo-hcmue.png}\\[1cm]
+    
+    \textbf{\Large TRƯỜNG ĐẠI HỌC SƯ PHẠM TP. HỒ CHÍ MINH}\\[0.3cm]
+    \textbf{\large KHOA CÔNG NGHỆ THÔNG TIN}\\[0.5cm]
+    
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+    {\Huge\bfseries ĐỀ CƯƠNG ĐỀ TÀI}\\[0.5cm]
+    
+    \rule{\linewidth}{0.5mm}\\[1.5cm]
+    
+    {\LARGE\bfseries\color{primaryblue} UE-Bot}\\[0.3cm]
+    {\Large AI Assistant Platform với Web Dashboard}\\[0.2cm]
+    {\Large và Điều khiển Giọng nói ESP32}\\[2cm]
+    
+    % Thông tin môn học - ĐIỀN VÀO ĐÂY
+    \begin{tabular}{rl}
+        \textbf{Môn học:} & \underline{\hspace{6cm}} \\[0.5cm]
+        \textbf{Giảng viên:} & \underline{\hspace{6cm}} \\[0.5cm]
+        \textbf{Học kỳ:} & \underline{\hspace{6cm}} \\[0.5cm]
+    \end{tabular}
+    
+    \vfill
+    
+    % Thành viên nhóm - ĐIỀN VÀO ĐÂY
+    \begin{tabular}{|c|l|l|}
+        \hline
+        \textbf{STT} & \textbf{Họ và tên} & \textbf{MSSV} \\
+        \hline
+        1 & \hspace{4cm} & \hspace{3cm} \\
+        \hline
+        2 & & \\
+        \hline
+        3 & & \\
+        \hline
+        4 & & \\
+        \hline
+    \end{tabular}
+    
+    \vspace{1.5cm}
+    
+    {\large TP. Hồ Chí Minh, Tháng 1/2026}
+    
+\end{titlepage}
+
+% ----------------------------------------------------------------------------
+% MỤC LỤC
+% ----------------------------------------------------------------------------
+\tableofcontents
+\newpage
+
+% ============================================================================
+% NỘI DUNG CHÍNH
+% ============================================================================
+
+\section{Tên đề tài}
+
+\begin{center}
+    \fcolorbox{primaryblue}{lightgray}{
+        \parbox{0.9\textwidth}{
+            \centering
+            \vspace{0.5cm}
+            {\LARGE\bfseries UE-Bot - AI Assistant Platform}\\[0.3cm]
+            {\large với Web Dashboard và Điều khiển Giọng nói ESP32}
+            \vspace{0.5cm}
+        }
+    }
+\end{center}
+
+\vspace{0.5cm}
+
+\textbf{Giải thích tên đề tài:}
+\begin{itemize}
+    \item \textbf{UE-Bot}: University of Education Bot - Trợ lý AI được phát triển bởi sinh viên Đại học Sư phạm
+    \item \textbf{AI Assistant Platform}: Nền tảng trợ lý trí tuệ nhân tạo đa năng
+    \item \textbf{Web Dashboard}: Giao diện web hiện đại để tương tác với AI
+    \item \textbf{ESP32 Voice Control}: Tích hợp điều khiển giọng nói qua phần cứng IoT
+\end{itemize}
+
+% ============================================================================
+\section{Vấn đề thực tế cần giải quyết}
+
+\subsection{Bối cảnh}
+
+Trong thời đại số hóa ngày nay, trí tuệ nhân tạo (AI) đã và đang thay đổi cách con người tương tác với công nghệ. Các trợ lý AI như ChatGPT, Claude, Gemini đã chứng minh khả năng hỗ trợ con người trong nhiều lĩnh vực: từ học tập, nghiên cứu đến công việc hàng ngày.
+
+Tuy nhiên, việc triển khai và tùy chỉnh các trợ lý AI theo nhu cầu cụ thể của người dùng Việt Nam vẫn còn nhiều hạn chế.
+
+\subsection{Các vấn đề cần giải quyết}
+
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item \textbf{Thiếu trợ lý AI có khả năng thực thi tác vụ thực tế}
+    \begin{itemize}
+        \item Các chatbot phổ biến chỉ trả lời câu hỏi, không thể thực hiện hành động
+        \item Người dùng cần AI có khả năng: đọc/ghi file, chạy code, tìm kiếm web, điều khiển thiết bị
+        \item Khó tích hợp AI vào quy trình làm việc thực tế
+    \end{itemize}
+    
+    \item \textbf{Rào cản tiếp cận công nghệ AI}
+    \begin{itemize}
+        \item Chi phí sử dụng API AI cao (GPT-4, Claude)
+        \item Giao diện phức tạp, không thân thiện với người dùng phổ thông
+        \item Thiếu giải pháp mã nguồn mở, có thể tùy chỉnh
+    \end{itemize}
+    
+    \item \textbf{Khoảng cách giữa AI và IoT/Hardware}
+    \begin{itemize}
+        \item Điều khiển thiết bị thông minh bằng giọng nói còn hạn chế
+        \item Các giải pháp hiện có (Google Home, Alexa) không linh hoạt, khó tùy chỉnh
+        \item Thiếu giải pháp kết hợp AI conversational với IoT trong môi trường Việt Nam
+    \end{itemize}
+    
+    \item \textbf{Nhu cầu đa nền tảng}
+    \begin{itemize}
+        \item Người dùng cần truy cập AI từ nhiều thiết bị: máy tính, điện thoại, terminal
+        \item Thiếu giải pháp thống nhất hỗ trợ Web, CLI, và Messaging platforms
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Đối tượng hướng đến}
+
+\begin{itemize}
+    \item \textbf{Sinh viên CNTT}: Cần trợ lý hỗ trợ lập trình, debug code
+    \item \textbf{Nhà phát triển}: Cần tool tự động hóa công việc
+    \item \textbf{Người dùng phổ thông}: Cần giao diện đơn giản để tương tác với AI
+    \item \textbf{Người quan tâm IoT}: Muốn điều khiển thiết bị thông minh bằng giọng nói
+\end{itemize}
+
+% ============================================================================
+\section{Mục tiêu sản phẩm}
+
+\subsection{Mục tiêu tổng quát}
+
+Xây dựng một nền tảng trợ lý AI hoàn chỉnh, mã nguồn mở, có khả năng:
+\begin{itemize}
+    \item Tương tác qua nhiều kênh (Web, CLI, Telegram)
+    \item Thực thi các tác vụ thực tế thông qua hệ thống công cụ (tools)
+    \item Tích hợp điều khiển giọng nói qua thiết bị ESP32
+    \item Hỗ trợ tiếng Việt và có thể tùy chỉnh theo nhu cầu
+\end{itemize}
+
+\subsection{Mục tiêu cụ thể}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{10cm}|c|}
+        \hline
+        \textbf{STT} & \textbf{Mục tiêu} & \textbf{Ưu tiên} \\
+        \hline
+        1 & Xây dựng Agent Core với hệ thống tool (đọc/ghi file, chạy code, shell, web search) & Cao \\
+        \hline
+        2 & Phát triển Web Dashboard với giao diện chat hiện đại, responsive & Cao \\
+        \hline
+        3 & Xây dựng CLI tool cho developer/power user & Cao \\
+        \hline
+        4 & Tích hợp Telegram Bot để chat qua messaging & Trung bình \\
+        \hline
+        5 & Hỗ trợ đa provider: Groq (miễn phí), OpenAI, Claude & Cao \\
+        \hline
+        6 & Xây dựng hệ thống bảo mật chống lệnh nguy hiểm & Cao \\
+        \hline
+        7 & Tích hợp ESP32 cho điều khiển giọng nói (Voice-to-Text) & Thấp \\
+        \hline
+        8 & Viết tài liệu hướng dẫn sử dụng và đóng góp & Trung bình \\
+        \hline
+    \end{tabular}
+    \caption{Bảng mục tiêu chi tiết}
+\end{table}
+
+\subsection{Tiêu chí đánh giá thành công}
+
+\begin{enumerate}
+    \item Web Dashboard hoạt động ổn định, có thể chat với AI
+    \item CLI tool có thể thực hiện các tác vụ: đọc file, ghi file, chạy shell command
+    \item Telegram Bot phản hồi tin nhắn và sử dụng được tools
+    \item Hệ thống bảo mật chặn được các lệnh nguy hiểm (format disk, xóa system files...)
+    \item Code được public trên GitHub với documentation đầy đủ
+\end{enumerate}
+
+% ============================================================================
+\section{Công nghệ dự kiến sử dụng}
+
+\subsection{Tổng quan stack công nghệ}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm,
+        box/.style={rectangle, rounded corners, draw=primaryblue, fill=lightgray, 
+                    text width=3cm, minimum height=1cm, align=center, font=\small},
+        arrow/.style={->, >=stealth, thick, color=primaryblue}
+    ]
+        % LLM Layer
+        \node[box, fill=yellow!20] (llm) {LLM Providers\\Groq / OpenAI / Claude};
+        
+        % Agent Core
+        \node[box, fill=green!20, below=of llm] (agent) {Agent Core\\Tool System};
+        
+        % Clients
+        \node[box, fill=blue!20, below left=1.5cm and 1cm of agent] (web) {Web Dashboard\\Next.js 14};
+        \node[box, fill=blue!20, below=of agent] (cli) {CLI\\Commander.js};
+        \node[box, fill=blue!20, below right=1.5cm and 1cm of agent] (tele) {Telegram Bot\\grammY};
+        
+        % Hardware
+        \node[box, fill=orange!20, below=2.5cm of cli] (esp) {ESP32\\Voice Control};
+        
+        % Arrows
+        \draw[arrow] (llm) -- (agent);
+        \draw[arrow] (agent) -- (web);
+        \draw[arrow] (agent) -- (cli);
+        \draw[arrow] (agent) -- (tele);
+        \draw[arrow, dashed] (esp) -- (agent);
+        
+    \end{tikzpicture}
+    \caption{Kiến trúc tổng quan hệ thống}
+\end{figure}
+
+\subsection{Chi tiết công nghệ}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|p{6cm}|}
+        \hline
+        \textbf{Thành phần} & \textbf{Công nghệ} & \textbf{Lý do chọn} \\
+        \hline
+        \multirow{3}{*}{Backend/Core} 
+        & Node.js 22 & Runtime phổ biến, hiệu năng cao \\
+        & TypeScript & Type safety, dễ maintain \\
+        & Zod & Validation schema mạnh mẽ \\
+        \hline
+        \multirow{4}{*}{Web Frontend}
+        & Next.js 14 & React framework hiện đại, SSR/SSG \\
+        & Tailwind CSS & Utility-first CSS, nhanh \\
+        & Shadcn/UI & Component library đẹp \\
+        & Zustand & State management đơn giản \\
+        \hline
+        \multirow{2}{*}{CLI}
+        & Commander.js & CLI framework phổ biến \\
+        & Inquirer.js & Interactive prompts \\
+        \hline
+        \multirow{2}{*}{Telegram}
+        & grammY & Telegram Bot framework hiện đại \\
+        & Telegraf & Alternative framework \\
+        \hline
+        \multirow{3}{*}{AI/LLM}
+        & Groq API & Miễn phí, nhanh \\
+        & OpenAI API & GPT-4, function calling tốt \\
+        & Anthropic API & Claude, context window lớn \\
+        \hline
+        \multirow{2}{*}{Hardware}
+        & ESP32-S3 & MCU mạnh, hỗ trợ WiFi/BLE \\
+        & PlatformIO & Build system cho embedded \\
+        \hline
+        \multirow{2}{*}{DevOps}
+        & pnpm & Package manager nhanh \\
+        & GitHub Actions & CI/CD \\
+        \hline
+    \end{tabular}
+    \caption{Bảng công nghệ chi tiết}
+\end{table}
+
+% ============================================================================
+\section{Sơ đồ quá trình thực hiện đề tài}
+
+\subsection{Sơ đồ các giai đoạn}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.8cm,
+        phase/.style={rectangle, rounded corners=5pt, draw=primaryblue, fill=blue!10,
+                      text width=4cm, minimum height=1.2cm, align=center, font=\small\bfseries},
+        task/.style={rectangle, rounded corners=3pt, draw=gray, fill=white,
+                     text width=3.5cm, minimum height=0.8cm, align=left, font=\footnotesize},
+        tech/.style={rectangle, rounded corners=3pt, draw=secondarygreen, fill=green!10,
+                     text width=3cm, minimum height=0.6cm, align=center, font=\footnotesize},
+        arrow/.style={->, >=stealth, thick}
+    ]
+        % Phase 1
+        \node[phase] (p1) {Phase 1\\Khởi tạo dự án};
+        \node[task, right=0.5cm of p1] (t1) {• Setup monorepo\\• Cấu hình TypeScript\\• CI/CD pipeline};
+        \node[tech, right=0.3cm of t1] (tech1) {pnpm, ESLint\\GitHub Actions};
+        
+        % Phase 2
+        \node[phase, below=1cm of p1] (p2) {Phase 2\\Agent Core};
+        \node[task, right=0.5cm of p2] (t2) {• LLM Providers\\• Tool System\\• Security Module};
+        \node[tech, right=0.3cm of t2] (tech2) {Groq, OpenAI\\Zod, Node.js};
+        
+        % Phase 3
+        \node[phase, below=1cm of p2] (p3) {Phase 3\\Web Dashboard};
+        \node[task, right=0.5cm of p3] (t3) {• UI Components\\• Chat Interface\\• Settings Modal};
+        \node[tech, right=0.3cm of t3] (tech3) {Next.js 14\\Tailwind, Shadcn};
+        
+        % Phase 4
+        \node[phase, below=1cm of p3] (p4) {Phase 4\\CLI \& Telegram};
+        \node[task, right=0.5cm of p4] (t4) {• CLI commands\\• Telegram Bot\\• Multi-platform};
+        \node[tech, right=0.3cm of t4] (tech4) {Commander.js\\grammY};
+        
+        % Phase 5
+        \node[phase, below=1cm of p4] (p5) {Phase 5\\ESP32 \& Hoàn thiện};
+        \node[task, right=0.5cm of p5] (t5) {• Voice Control\\• Testing\\• Documentation};
+        \node[tech, right=0.3cm of t5] (tech5) {PlatformIO\\ESP32-S3};
+        
+        % Arrows
+        \draw[arrow] (p1) -- (p2);
+        \draw[arrow] (p2) -- (p3);
+        \draw[arrow] (p3) -- (p4);
+        \draw[arrow] (p4) -- (p5);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ các giai đoạn thực hiện}
+\end{figure}
+
+\subsection{Gantt Chart - Timeline}
+
+\begin{figure}[H]
+    \centering
+    \begin{ganttchart}[
+        hgrid,
+        vgrid,
+        x unit=0.8cm,
+        y unit chart=0.6cm,
+        title height=1,
+        bar height=0.5,
+        bar/.style={fill=primaryblue},
+        bar incomplete/.style={fill=gray!30},
+        milestone/.style={fill=warningorange},
+        group/.style={fill=secondarygreen},
+        title label font=\footnotesize,
+        bar label font=\footnotesize,
+        group label font=\footnotesize\bfseries
+    ]{1}{16}
+        
+        % Title
+        \gantttitle{Tháng 1}{4}
+        \gantttitle{Tháng 2}{4}
+        \gantttitle{Tháng 3}{4}
+        \gantttitle{Tháng 4}{4} \\
+        \gantttitlelist{1,...,16}{1} \\
+        
+        % Phase 1
+        \ganttgroup{Phase 1: Setup}{1}{2} \\
+        \ganttbar{Khởi tạo monorepo}{1}{1} \\
+        \ganttbar{Config CI/CD}{2}{2} \\
+        
+        % Phase 2
+        \ganttgroup{Phase 2: Agent Core}{3}{6} \\
+        \ganttbar{LLM Providers}{3}{4} \\
+        \ganttbar{Tool System}{4}{5} \\
+        \ganttbar{Security Module}{5}{6} \\
+        
+        % Phase 3
+        \ganttgroup{Phase 3: Web}{7}{10} \\
+        \ganttbar{UI Components}{7}{8} \\
+        \ganttbar{Chat Interface}{8}{9} \\
+        \ganttbar{Settings \& Polish}{9}{10} \\
+        
+        % Phase 4
+        \ganttgroup{Phase 4: CLI \& Tele}{11}{13} \\
+        \ganttbar{CLI Tool}{11}{12} \\
+        \ganttbar{Telegram Bot}{12}{13} \\
+        
+        % Phase 5
+        \ganttgroup{Phase 5: Hardware}{14}{16} \\
+        \ganttbar{ESP32 Voice}{14}{15} \\
+        \ganttbar{Testing \& Docs}{15}{16} \\
+        
+        % Milestones
+        \ganttmilestone{Demo v1}{10}
+        \ganttmilestone{Release}{16}
+        
+    \end{ganttchart}
+    \caption{Gantt Chart - Kế hoạch thực hiện}
+\end{figure}
+
+% ============================================================================
+\section{Phân công vai trò trong nhóm}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|l|l|p{5cm}|}
+        \hline
+        \textbf{STT} & \textbf{Họ tên} & \textbf{Vai trò} & \textbf{Nhiệm vụ chính} \\
+        \hline
+        1 & \underline{\hspace{3cm}} & Team Leader & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Quản lý tiến độ
+            \item Code review
+            \item Architect hệ thống
+        \end{itemize} \\
+        \hline
+        2 & \underline{\hspace{3cm}} & Backend Dev & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Agent Core
+            \item Tool System
+            \item Security Module
+        \end{itemize} \\
+        \hline
+        3 & \underline{\hspace{3cm}} & Frontend Dev & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Web Dashboard
+            \item UI/UX Design
+            \item Responsive design
+        \end{itemize} \\
+        \hline
+        4 & \underline{\hspace{3cm}} & Integration Dev & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item CLI Tool
+            \item Telegram Bot
+            \item ESP32 firmware
+        \end{itemize} \\
+        \hline
+    \end{tabular}
+    \caption{Bảng phân công vai trò}
+\end{table}
+
+\textbf{Ghi chú:} Các thành viên có thể hỗ trợ lẫn nhau khi cần thiết. Buổi họp nhóm định kỳ: 1 lần/tuần.
+
+% ============================================================================
+\section{Kế hoạch thực hiện (Timeline)}
+
+\subsection{Chi tiết theo tuần}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{|c|c|p{7cm}|p{3cm}|}
+        \hline
+        \textbf{Tuần} & \textbf{Thời gian} & \textbf{Công việc} & \textbf{Deliverable} \\
+        \hline
+        1-2 & 01/01 - 14/01 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Setup monorepo với pnpm
+            \item Cấu hình TypeScript, ESLint
+            \item Setup GitHub Actions CI/CD
+        \end{itemize} & Repo structure \\
+        \hline
+        3-4 & 15/01 - 28/01 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Phát triển LLM Providers (Groq, OpenAI, Claude)
+            \item Xây dựng Provider Factory
+        \end{itemize} & Agent Core v0.1 \\
+        \hline
+        5-6 & 29/01 - 11/02 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Tool System (read, write, exec, bash)
+            \item Security Module
+        \end{itemize} & Tools working \\
+        \hline
+        7-8 & 12/02 - 25/02 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Web UI Components (Shadcn)
+            \item Chat Interface
+        \end{itemize} & Web v0.1 \\
+        \hline
+        9-10 & 26/02 - 11/03 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Settings Modal
+            \item Multi-provider support
+            \item \textbf{Demo v1}
+        \end{itemize} & \textbf{Demo v1} \\
+        \hline
+        11-12 & 12/03 - 25/03 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item CLI Tool với Commander.js
+            \item Telegram Bot với grammY
+        \end{itemize} & CLI + Tele working \\
+        \hline
+        13-14 & 26/03 - 08/04 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item ESP32 Voice Control
+            \item Integration testing
+        \end{itemize} & ESP32 prototype \\
+        \hline
+        15-16 & 09/04 - 22/04 & 
+        \begin{itemize}[leftmargin=*, nosep]
+            \item Bug fixes
+            \item Documentation
+            \item \textbf{Final Release}
+        \end{itemize} & \textbf{Release v1.0} \\
+        \hline
+    \end{tabular}
+    \caption{Timeline chi tiết theo tuần}
+\end{table}
+
+\subsection{Milestone quan trọng}
+
+\begin{enumerate}
+    \item \textbf{Tuần 2} (14/01/2026): Hoàn thành setup dự án
+    \item \textbf{Tuần 6} (11/02/2026): Agent Core hoạt động với tools
+    \item \textbf{Tuần 10} (11/03/2026): \colorbox{yellow!30}{\textbf{Demo v1}} - Web Dashboard + Chat
+    \item \textbf{Tuần 12} (25/03/2026): CLI và Telegram Bot hoàn thiện
+    \item \textbf{Tuần 16} (22/04/2026): \colorbox{green!30}{\textbf{Release v1.0}} - Sản phẩm hoàn chỉnh
+\end{enumerate}
+
+% ============================================================================
+\section{Rủi ro và giải pháp}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{4cm}|c|p{5cm}|}
+        \hline
+        \textbf{Rủi ro} & \textbf{Mức độ} & \textbf{Giải pháp} \\
+        \hline
+        API Key bị giới hạn/mất & Cao & Hỗ trợ multi-provider, user tự nhập key \\
+        \hline
+        Groq function calling không ổn định & Trung bình & Fallback sang OpenAI/Claude \\
+        \hline
+        ESP32 hardware issue & Thấp & Đặt ưu tiên thấp, có thể bỏ qua \\
+        \hline
+        Thành viên bận/nghỉ & Trung bình & Cross-training, documentation tốt \\
+        \hline
+    \end{tabular}
+    \caption{Bảng phân tích rủi ro}
+\end{table}
+
+% ============================================================================
+\section{Tài liệu tham khảo}
+
+\begin{enumerate}
+    \item Moltbot Documentation: \url{https://docs.molt.bot/}
+    \item Next.js 14 Documentation: \url{https://nextjs.org/docs}
+    \item Groq API Reference: \url{https://console.groq.com/docs}
+    \item OpenAI API Reference: \url{https://platform.openai.com/docs}
+    \item Anthropic Claude API: \url{https://docs.anthropic.com/}
+    \item grammY Telegram Bot: \url{https://grammy.dev/}
+    \item ESP32 PlatformIO: \url{https://platformio.org/}
+\end{enumerate}
+
+% ============================================================================
+\section*{Phụ lục: Link dự án}
+
+\begin{itemize}
+    \item \textbf{GitHub Repository}: \url{https://github.com/DuongThanhTaii/UE-Bot}
+    \item \textbf{Demo Web}: (Sẽ cập nhật sau khi deploy)
+    \item \textbf{Telegram Bot}: (Sẽ cập nhật sau khi public)
+\end{itemize}
+
+\vspace{2cm}
+
+\begin{center}
+    \rule{0.5\textwidth}{0.5pt}\\[0.5cm]
+    \textit{Tài liệu này được tạo ngày \today}
+\end{center}
+
+\end{document}

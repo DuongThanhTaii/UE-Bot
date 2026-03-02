@@ -301,7 +301,11 @@ export function generateSecurityReport(
   result: SecurityCheckResult
 ): string {
   const timestamp = new Date().toISOString();
-  const status = result.allowed ? (result.requiresApproval ? 'NEEDS_APPROVAL' : 'ALLOWED') : 'BLOCKED';
+  const status = result.allowed
+    ? result.requiresApproval
+      ? 'NEEDS_APPROVAL'
+      : 'ALLOWED'
+    : 'BLOCKED';
 
   return `[${timestamp}] [SECURITY] [${status}] ${action}: ${target}${result.reason ? ` - ${result.reason}` : ''}`;
 }
