@@ -1,0 +1,26 @@
+# Render.com Blueprint for UE-Bot Bridge Service
+# Deploy: https://render.com/deploy
+
+services:
+  - type: web
+    name: ue-bot-bridge
+    runtime: docker
+    dockerfilePath: packages/bridge-service/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8080"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_ID
+        value: 21m00Tcm4TlvDq8ikWAM
+      - key: LOG_LEVEL
+        value: info
+    healthCheckPath: /health

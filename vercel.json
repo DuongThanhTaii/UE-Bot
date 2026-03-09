@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @ue-bot/shared build && pnpm --filter @ue-bot/agent-core build && pnpm --filter @ue-bot/database build && pnpm --filter @ue-bot/webapp build",
+  "outputDirectory": "packages/webapp/.next",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
+}
