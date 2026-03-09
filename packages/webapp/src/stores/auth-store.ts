@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface User {
+  id?: string;
   email: string;
   name: string;
   avatar?: string;
@@ -16,9 +17,9 @@ interface AuthState {
   // Actions
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   setUser: (user: User | null) => void;
-  checkAuth: () => boolean;
+  checkAuth: () => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,31 +34,27 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
 
         try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
 
-          // In real app, call your auth API
-          // const response = await fetch('/api/auth/login', { ... });
-
-          // For demo, accept any credentials
-          if (email && password) {
-            const user = {
-              email,
-              name: email.split('@')[0],
-            };
-
-            set({
-              user,
-              token: 'demo-token-' + Date.now(),
-              isAuthenticated: true,
-              isLoading: false,
-            });
-
-            return true;
+          if (!res.ok) {
+            set({ isLoading: false });
+            return false;
           }
 
-          set({ isLoading: false });
-          return false;
+          const data = await res.json();
+
+          set({
+            user: data.user,
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+
+          return true;
         } catch (error) {
           console.error('Login error:', error);
           set({ isLoading: false });
@@ -69,27 +66,27 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
 
         try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password }),
+          });
 
-          // In real app, call your auth API
-          // const response = await fetch('/api/auth/register', { ... });
-
-          if (name && email && password) {
-            const user = { name, email };
-
-            set({
-              user,
-              token: 'demo-token-' + Date.now(),
-              isAuthenticated: true,
-              isLoading: false,
-            });
-
-            return true;
+          if (!res.ok) {
+            set({ isLoading: false });
+            return false;
           }
 
-          set({ isLoading: false });
-          return false;
+          const data = await res.json();
+
+          set({
+            user: data.user,
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+
+          return true;
         } catch (error) {
           console.error('Register error:', error);
           set({ isLoading: false });
@@ -97,7 +94,12 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      logout: () => {
+      logout: async () => {
+        try {
+          await fetch('/api/auth/logout', { method: 'POST' });
+        } catch {
+          // Ignore logout API errors
+        }
         set({
           user: null,
           token: null,
@@ -112,9 +114,26 @@ export const useAuthStore = create<AuthState>()(
         });
       },
 
-      checkAuth: () => {
-        const { token, user } = get();
-        return !!(token && user);
+      checkAuth: async () => {
+        const { token } = get();
+        if (!token) return false;
+
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!res.ok) {
+            set({ user: null, token: null, isAuthenticated: false });
+            return false;
+          }
+
+          const data = await res.json();
+          set({ user: data.user, isAuthenticated: true });
+          return true;
+        } catch {
+          return false;
+        }
       },
     }),
     {

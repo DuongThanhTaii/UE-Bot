@@ -3,31 +3,9 @@
  * @module webapp/api/agent/sessions/[id]
  */
 
-import { FileSessionStore, SessionManager } from '@ue-bot/agent-core';
 import { NextRequest } from 'next/server';
-import * as os from 'os';
-import * as path from 'path';
 
-// Shared data directory - same as CLI and Telegram
-const SHARED_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), '.ue-bot', 'data');
-
-// Initialize session manager (singleton)
-let sessionManager: SessionManager | null = null;
-
-function getSessionManager(): SessionManager {
-  if (!sessionManager) {
-    const store = new FileSessionStore({
-      directory: path.join(SHARED_DATA_DIR, 'sessions'),
-    });
-
-    sessionManager = new SessionManager({
-      store,
-      maxMessages: 100,
-    });
-  }
-
-  return sessionManager;
-}
+import { getSessionManager } from '@/lib/db';
 
 /**
  * GET /api/agent/sessions/[id]
@@ -35,7 +13,7 @@ function getSessionManager(): SessionManager {
  */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const sessions = getSessionManager();
+    const sessions = await getSessionManager();
     const session = await sessions.get(params.id);
 
     if (!session) {
@@ -66,7 +44,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const body = await request.json();
     const { title, state, metadata } = body;
 
-    const sessions = getSessionManager();
+    const sessions = await getSessionManager();
 
     if (title) {
       await sessions.setTitle(params.id, title);
@@ -100,7 +78,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
  */
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const sessions = getSessionManager();
+    const sessions = await getSessionManager();
     await sessions.delete(params.id);
 
     return Response.json({ success: true });

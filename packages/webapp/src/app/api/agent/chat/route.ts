@@ -5,51 +5,36 @@
 
 import {
   Agent,
-  FileSessionStore,
   GroqProvider,
-  SQLiteMemoryStore,
-  SessionManager,
   ToolRegistry,
   agentStreamToSSE,
   createFsTools,
   createMemoryTools,
   createRuntimeTools,
   createWebTools,
-  setMemoryStore,
 } from '@ue-bot/agent-core';
 import { NextRequest } from 'next/server';
-import * as os from 'os';
-import * as path from 'path';
 
-// Shared data directory - same as CLI and Telegram for cross-platform sync
-const SHARED_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), '.ue-bot', 'data');
+import { getMemoryStore, getSessionManager } from '@/lib/db';
 
-// Initialize stores (singleton)
+// Initialize agent (singleton)
 let agent: Agent | null = null;
-let sessionManager: SessionManager | null = null;
 
-function getAgent(): Agent {
+async function getAgent(): Promise<Agent> {
   if (!agent) {
-    // Get API key from environment
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable not set');
     }
 
-    // Initialize provider
     const provider = new GroqProvider({
       apiKey,
       model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
     });
 
-    // Initialize memory store
-    // Initialize memory store (shared with CLI and Telegram)
-    const memoryStore = new SQLiteMemoryStore({
-      dbPath: path.join(SHARED_DATA_DIR, 'memory.db'),
-    });
-    setMemoryStore(memoryStore);
+    // Initialize memory store (Postgres or SQLite based on env)
+    await getMemoryStore();
 
-    // Initialize tool registry
     const registry = new ToolRegistry();
     registry.registerMany([
       ...createFsTools(),
@@ -58,7 +43,6 @@ function getAgent(): Agent {
       ...createMemoryTools(),
     ]);
 
-    // Create agent
     agent = new Agent(provider, registry, {
       workingDirectory: process.env.AGENT_WORKING_DIR || process.cwd(),
       maxIterations: parseInt(process.env.AGENT_MAX_ITERATIONS || '10'),
@@ -66,22 +50,6 @@ function getAgent(): Agent {
   }
 
   return agent;
-}
-
-function getSessionManager(): SessionManager {
-  if (!sessionManager) {
-    const store = new FileSessionStore({
-      directory: path.join(SHARED_DATA_DIR, 'sessions'),
-    });
-
-    sessionManager = new SessionManager({
-      store,
-      maxMessages: 100,
-      autoArchiveAfter: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-  }
-
-  return sessionManager;
 }
 
 /**
@@ -97,8 +65,8 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    const agent = getAgent();
-    const sessions = getSessionManager();
+    const agent = await getAgent();
+    const sessions = await getSessionManager();
 
     // Get or create session
     const session = await sessions.getOrCreate(sessionId);

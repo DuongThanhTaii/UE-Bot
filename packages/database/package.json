@@ -1,0 +1,32 @@
+{
+  "name": "@ue-bot/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Database layer for UE-Bot - Drizzle ORM + Neon PostgreSQL",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "tsx src/migrate.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.0",
+    "@ue-bot/agent-core": "workspace:*",
+    "drizzle-orm": "^0.36.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.0.0",
+    "drizzle-kit": "^0.30.0",
+    "rimraf": "^5.0.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.5.0"
+  }
+}

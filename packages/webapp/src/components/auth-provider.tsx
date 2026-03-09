@@ -15,24 +15,25 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, checkAuth } = useAuthStore();
+  const { checkAuth } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
-    const isAuth = checkAuth();
 
-    // If not authenticated and trying to access protected route
-    if (!isAuth && !isPublicPath) {
-      router.push('/auth/login');
-    }
-    // If authenticated and trying to access auth pages
-    else if (isAuth && isPublicPath) {
-      router.push('/');
-    }
+    void checkAuth().then((isAuth) => {
+      // If not authenticated and trying to access protected route
+      if (!isAuth && !isPublicPath) {
+        router.push('/auth/login');
+      }
+      // If authenticated and trying to access auth pages
+      else if (isAuth && isPublicPath) {
+        router.push('/');
+      }
 
-    setIsChecking(false);
-  }, [pathname, checkAuth, router, isAuthenticated]);
+      setIsChecking(false);
+    });
+  }, [pathname, checkAuth, router]);
 
   // Show loading while checking auth
   if (isChecking) {

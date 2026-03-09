@@ -3,31 +3,9 @@
  * @module webapp/api/agent/sessions
  */
 
-import { FileSessionStore, SessionManager } from '@ue-bot/agent-core';
 import { NextRequest } from 'next/server';
-import * as os from 'os';
-import * as path from 'path';
 
-// Shared data directory - same as CLI and Telegram
-const SHARED_DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), '.ue-bot', 'data');
-
-// Initialize session manager (singleton)
-let sessionManager: SessionManager | null = null;
-
-function getSessionManager(): SessionManager {
-  if (!sessionManager) {
-    const store = new FileSessionStore({
-      directory: path.join(SHARED_DATA_DIR, 'sessions'),
-    });
-
-    sessionManager = new SessionManager({
-      store,
-      maxMessages: 100,
-    });
-  }
-
-  return sessionManager;
-}
+import { getSessionManager } from '@/lib/db';
 
 /**
  * GET /api/agent/sessions
@@ -40,7 +18,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    const sessions = getSessionManager();
+    const sessions = await getSessionManager();
     const list = await sessions.list({ state, limit, offset });
 
     return Response.json({
@@ -66,7 +44,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST() {
   try {
-    const sessions = getSessionManager();
+    const sessions = await getSessionManager();
     const session = await sessions.create();
 
     return Response.json({
