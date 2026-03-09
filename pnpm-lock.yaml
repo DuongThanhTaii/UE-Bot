@@ -102,6 +102,9 @@ importers:
 
   packages/bridge-service:
     dependencies:
+      '@ue-bot/agent-core':
+        specifier: workspace:*
+        version: link:../agent-core
       '@ue-bot/shared':
         specifier: workspace:*
         version: link:../shared

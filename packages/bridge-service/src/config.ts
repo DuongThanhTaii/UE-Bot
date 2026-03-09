@@ -14,12 +14,19 @@ const configSchema = z.object({
   GATEWAY_PORT: z.coerce.number().default(18789),
   GATEWAY_TOKEN: z.string().optional(),
 
-  // OpenAI (Whisper)
+  // AI - Groq (Agent + STT)
+  GROQ_API_KEY: z.string().optional(),
+  GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),
+
+  // OpenAI (Whisper fallback)
   OPENAI_API_KEY: z.string().optional(),
 
-  // ElevenLabs
+  // ElevenLabs (TTS)
   ELEVENLABS_API_KEY: z.string().optional(),
-  ELEVENLABS_VOICE_ID: z.string().optional(),
+  ELEVENLABS_VOICE_ID: z.string().default('21m00Tcm4TlvDq8ikWAM'),
+
+  // Brave Search
+  BRAVE_SEARCH_API_KEY: z.string().optional(),
 
   // Logging
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),

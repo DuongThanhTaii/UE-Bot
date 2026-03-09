@@ -11,6 +11,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/bridge-service/package.json ./packages/bridge-service/
 COPY packages/shared/package.json ./packages/shared/
+COPY packages/agent-core/package.json ./packages/agent-core/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -27,11 +28,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages/bridge-service/node_modules ./packages/bridge-service/node_modules
 COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/packages/agent-core/node_modules ./packages/agent-core/node_modules
 
 COPY . .
 
 # Build shared
 RUN pnpm --filter @ue-bot/shared build
+
+# Build agent-core
+RUN pnpm --filter @ue-bot/agent-core build
 
 # Build bridge-service
 RUN pnpm --filter @ue-bot/bridge-service build
