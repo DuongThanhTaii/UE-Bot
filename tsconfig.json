@@ -30,5 +30,16 @@
     "sourceMap": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "dist", "build", ".next", "coverage", "**/*.test.ts", "**/*.spec.ts"]
+  "include": ["packages/*/src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "coverage",
+    "external",
+    "packages/webapp",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
