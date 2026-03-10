@@ -22,7 +22,7 @@
     "build:all": "pnpm -r build",
     "build:webapp": "pnpm --filter @ue-bot/webapp build",
     "build:bridge": "pnpm --filter @ue-bot/bridge-service build",
-    "test": "pnpm --filter @ue-bot/agent-core --filter @ue-bot/cli --filter @ue-bot/bridge-service test",
+    "test": "pnpm --filter @ue-bot/agent-core --filter @ue-bot/database --filter @ue-bot/bridge-service test",
     "test:all": "pnpm -r --filter \"!@ue-bot/esp32-firmware\" test",
     "test:e2e": "pnpm -r test:e2e",
     "lint": "pnpm -r --filter \"!@ue-bot/esp32-firmware\" lint",

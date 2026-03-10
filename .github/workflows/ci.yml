@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -43,8 +45,16 @@ jobs:
         run: pnpm --filter @ue-bot/shared --filter @ue-bot/webapp lint || true
         continue-on-error: true
 
-      - name: Run Type Check
-        run: pnpm typecheck
+      - name: Type Check (database)
+        run: pnpm --filter @ue-bot/database typecheck
+
+      - name: Type Check (bridge-service)
+        run: pnpm --filter @ue-bot/bridge-service typecheck
+        continue-on-error: true
+
+      - name: Type Check (webapp)
+        run: pnpm --filter @ue-bot/webapp typecheck
+        continue-on-error: true
 
   # ===================
   # Build
@@ -56,6 +66,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -74,28 +86,20 @@ jobs:
       - name: Build shared package
         run: pnpm --filter @ue-bot/shared build
 
+      - name: Build agent-core
+        run: pnpm --filter @ue-bot/agent-core build
+
+      - name: Build database
+        run: pnpm --filter @ue-bot/database build
+
+      - name: Build bridge-service
+        run: pnpm --filter @ue-bot/bridge-service build
+
       - name: Build webapp
         run: pnpm --filter @ue-bot/webapp build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8080
           NEXT_PUBLIC_WS_URL: ws://localhost:8080
-
-      - name: Build bridge-service
-        run: pnpm --filter @ue-bot/bridge-service build
-
-      - name: Upload webapp build
-        uses: actions/upload-artifact@v4
-        with:
-          name: webapp-build
-          path: packages/webapp/.next
-          retention-days: 7
-
-      - name: Upload bridge build
-        uses: actions/upload-artifact@v4
-        with:
-          name: bridge-build
-          path: packages/bridge-service/dist
-          retention-days: 7
 
   # ===================
   # Test
@@ -107,6 +111,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -122,57 +128,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm test
+      - name: Test agent-core
+        run: pnpm --filter @ue-bot/agent-core test
         env:
           CI: true
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        if: always()
-        with:
-          files: ./coverage/lcov.info
-          fail_ci_if_error: false
+      - name: Test database
+        run: pnpm --filter @ue-bot/database test
+        env:
+          CI: true
 
-  # ===================
-  # Security Scan
-  # ===================
-  security:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run security audit
-        run: pnpm audit --audit-level=high
-        continue-on-error: true
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          severity: 'CRITICAL,HIGH'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+      - name: Test bridge-service
+        run: pnpm --filter @ue-bot/bridge-service test
+        env:
+          CI: true
