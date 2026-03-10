@@ -12,6 +12,10 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/bridge-service/package.json ./packages/bridge-service/
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/agent-core/package.json ./packages/agent-core/
+COPY packages/database/package.json ./packages/database/
+COPY packages/webapp/package.json ./packages/webapp/
+COPY packages/cli/package.json ./packages/cli/
+COPY packages/telegram-bot/package.json ./packages/telegram-bot/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
