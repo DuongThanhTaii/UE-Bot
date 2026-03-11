@@ -3,6 +3,7 @@
 import { Bot, Cpu, LayoutDashboard, MessageSquare, Settings, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -21,8 +22,26 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose }: SidebarProps): React.ReactElement {
   const pathname = usePathname();
+  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+
+  useEffect(() => {
+    const checkHealth = (): void => {
+      fetch('/api/health')
+        .then((r) => {
+          setApiStatus(r.ok ? 'online' : 'offline');
+        })
+        .catch(() => {
+          setApiStatus('offline');
+        });
+    };
+    checkHealth();
+    const interval = setInterval(checkHealth, 30000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -78,8 +97,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div className="flex items-center justify-between">
                   <span>API</span>
                   <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-green-500" />
-                    Online
+                    <span
+                      className={cn(
+                        'h-2 w-2 rounded-full',
+                        apiStatus === 'online'
+                          ? 'bg-green-500'
+                          : apiStatus === 'offline'
+                            ? 'bg-red-500'
+                            : 'bg-yellow-500'
+                      )}
+                    />
+                    {apiStatus === 'checking'
+                      ? 'Checking...'
+                      : apiStatus === 'online'
+                        ? 'Online'
+                        : 'Offline'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">

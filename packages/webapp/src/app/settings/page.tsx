@@ -4,6 +4,7 @@ import {
   Bell,
   Globe,
   Key,
+  Loader2,
   Mic,
   Moon,
   Palette,
@@ -14,7 +15,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layouts/dashboard-layout';
 import { Badge } from '@/components/ui/badge';
@@ -25,17 +26,21 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/services/api';
+import { useAuthStore } from '@/stores/auth-store';
 
-export default function SettingsPage() {
+export default function SettingsPage(): React.ReactElement {
   const { theme, setTheme } = useTheme();
+  const { user } = useAuthStore();
   const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
   // Settings state
   const [settings, setSettings] = useState({
     // Profile
-    displayName: 'UE-Bot User',
-    email: 'user@hcmue.edu.vn',
-    bio: 'HCMUE Student',
+    displayName: user?.name ?? 'UE-Bot User',
+    email: user?.email ?? '',
+    bio: '',
 
     // Notifications
     notifyOnMessage: true,
@@ -59,11 +64,53 @@ export default function SettingsPage() {
     sessionTimeout: 30,
   });
 
-  const handleSave = async () => {
+  // Load settings from API
+  useEffect(() => {
+    void api
+      .getSettings()
+      .then((data) => {
+        const s = data.settings;
+        if (s && Object.keys(s).length > 0) {
+          setSettings((prev) => ({
+            ...prev,
+            ...Object.fromEntries(
+              Object.entries(s).map(([k, v]): [string, string | number | boolean] => {
+                // Convert string "true"/"false" back to boolean
+                if (v === 'true') return [k, true];
+                if (v === 'false') return [k, false];
+                // Convert numeric strings
+                const num = Number(v);
+                if (!isNaN(num) && v !== '') return [k, num];
+                return [k, v];
+              })
+            ),
+          }));
+        }
+      })
+      .catch(() => {
+        // use defaults
+      });
+  }, []);
+
+  const handleSave = async (): Promise<void> => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSaving(false);
+    setSaveMessage('');
+    try {
+      // Convert all values to strings for the API
+      const flat: Record<string, string> = {};
+      for (const [k, v] of Object.entries(settings)) {
+        flat[k] = String(v);
+      }
+      await api.saveSettings(flat);
+      setSaveMessage('Settings saved successfully!');
+      setTimeout(() => {
+        setSaveMessage('');
+      }, 3000);
+    } catch {
+      setSaveMessage('Failed to save settings.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -75,11 +122,23 @@ export default function SettingsPage() {
             <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
             <p className="text-muted-foreground">Manage your account settings and preferences</p>
           </div>
-          <Button onClick={handleSave} disabled={isSaving}>
-            <Save className="mr-2 h-4 w-4" />
+          <Button onClick={() => void handleSave()} disabled={isSaving}>
+            {isSaving ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
             {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
+
+        {saveMessage && (
+          <div
+            className={`rounded-md p-3 text-sm ${saveMessage.includes('success') ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-destructive/15 text-destructive'}`}
+          >
+            {saveMessage}
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Profile Settings */}
@@ -97,7 +156,9 @@ export default function SettingsPage() {
                 <Input
                   id="displayName"
                   value={settings.displayName}
-                  onChange={(e) => setSettings({ ...settings, displayName: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, displayName: e.target.value });
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -106,7 +167,9 @@ export default function SettingsPage() {
                   id="email"
                   type="email"
                   value={settings.email}
-                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, email: e.target.value });
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -114,7 +177,9 @@ export default function SettingsPage() {
                 <Textarea
                   id="bio"
                   value={settings.bio}
-                  onChange={(e) => setSettings({ ...settings, bio: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, bio: e.target.value });
+                  }}
                   rows={3}
                 />
               </div>
@@ -137,7 +202,9 @@ export default function SettingsPage() {
                   <Button
                     variant={theme === 'light' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setTheme('light')}
+                    onClick={() => {
+                      setTheme('light');
+                    }}
                   >
                     <Sun className="mr-2 h-4 w-4" />
                     Light
@@ -145,7 +212,9 @@ export default function SettingsPage() {
                   <Button
                     variant={theme === 'dark' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setTheme('dark')}
+                    onClick={() => {
+                      setTheme('dark');
+                    }}
                   >
                     <Moon className="mr-2 h-4 w-4" />
                     Dark
@@ -153,7 +222,9 @@ export default function SettingsPage() {
                   <Button
                     variant={theme === 'system' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setTheme('system')}
+                    onClick={() => {
+                      setTheme('system');
+                    }}
                   >
                     System
                   </Button>
@@ -166,7 +237,9 @@ export default function SettingsPage() {
                   id="language"
                   className="w-full rounded-md border border-input bg-background px-3 py-2"
                   value={settings.language}
-                  onChange={(e) => setSettings({ ...settings, language: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, language: e.target.value });
+                  }}
                 >
                   <option value="vi-VN">Tiếng Việt</option>
                   <option value="en-US">English (US)</option>
@@ -195,9 +268,9 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={settings.notifyOnMessage}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, notifyOnMessage: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setSettings({ ...settings, notifyOnMessage: checked });
+                  }}
                 />
               </div>
               <Separator />
@@ -208,9 +281,9 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={settings.notifyOnDeviceOffline}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, notifyOnDeviceOffline: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setSettings({ ...settings, notifyOnDeviceOffline: checked });
+                  }}
                 />
               </div>
               <Separator />
@@ -223,9 +296,9 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={settings.notifyOnVoiceCommand}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, notifyOnVoiceCommand: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setSettings({ ...settings, notifyOnVoiceCommand: checked });
+                  }}
                 />
               </div>
               <Separator />
@@ -236,9 +309,9 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={settings.notifyByEmail}
-                  onCheckedChange={(checked) =>
-                    setSettings({ ...settings, notifyByEmail: checked })
-                  }
+                  onCheckedChange={(checked) => {
+                    setSettings({ ...settings, notifyByEmail: checked });
+                  }}
                 />
               </div>
             </CardContent>
@@ -259,7 +332,9 @@ export default function SettingsPage() {
                 <Input
                   id="wakeWord"
                   value={settings.wakeWord}
-                  onChange={(e) => setSettings({ ...settings, wakeWord: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, wakeWord: e.target.value });
+                  }}
                 />
                 <p className="text-xs text-muted-foreground">
                   The phrase that activates voice recognition
@@ -274,9 +349,9 @@ export default function SettingsPage() {
                   max="2"
                   step="0.1"
                   value={settings.voiceSpeed}
-                  onChange={(e) =>
-                    setSettings({ ...settings, voiceSpeed: parseFloat(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    setSettings({ ...settings, voiceSpeed: parseFloat(e.target.value) });
+                  }}
                   className="w-full"
                 />
               </div>
@@ -292,9 +367,9 @@ export default function SettingsPage() {
                   max="1"
                   step="0.1"
                   value={settings.voiceVolume}
-                  onChange={(e) =>
-                    setSettings({ ...settings, voiceVolume: parseFloat(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    setSettings({ ...settings, voiceVolume: parseFloat(e.target.value) });
+                  }}
                   className="w-full"
                 />
               </div>
@@ -317,7 +392,9 @@ export default function SettingsPage() {
                   id="aiModel"
                   className="w-full rounded-md border border-input bg-background px-3 py-2"
                   value={settings.aiModel}
-                  onChange={(e) => setSettings({ ...settings, aiModel: e.target.value })}
+                  onChange={(e) => {
+                    setSettings({ ...settings, aiModel: e.target.value });
+                  }}
                 >
                   <option value="llama-3.1-8b-instant">Llama 3.1 8B (Fast)</option>
                   <option value="llama-3.1-70b-versatile">Llama 3.1 70B (Smart)</option>
@@ -333,9 +410,9 @@ export default function SettingsPage() {
                   max="4096"
                   step="256"
                   value={settings.maxTokens}
-                  onChange={(e) =>
-                    setSettings({ ...settings, maxTokens: parseInt(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    setSettings({ ...settings, maxTokens: parseInt(e.target.value) });
+                  }}
                   className="w-full"
                 />
               </div>
@@ -348,9 +425,9 @@ export default function SettingsPage() {
                   max="1"
                   step="0.1"
                   value={settings.temperature}
-                  onChange={(e) =>
-                    setSettings({ ...settings, temperature: parseFloat(e.target.value) })
-                  }
+                  onChange={(e) => {
+                    setSettings({ ...settings, temperature: parseFloat(e.target.value) });
+                  }}
                   className="w-full"
                 />
                 <p className="text-xs text-muted-foreground">
@@ -379,9 +456,9 @@ export default function SettingsPage() {
                   {settings.twoFactorEnabled && <Badge variant="secondary">Enabled</Badge>}
                   <Switch
                     checked={settings.twoFactorEnabled}
-                    onCheckedChange={(checked) =>
-                      setSettings({ ...settings, twoFactorEnabled: checked })
-                    }
+                    onCheckedChange={(checked) => {
+                      setSettings({ ...settings, twoFactorEnabled: checked });
+                    }}
                   />
                 </div>
               </div>
@@ -394,12 +471,12 @@ export default function SettingsPage() {
                   min="5"
                   max="120"
                   value={settings.sessionTimeout}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setSettings({
                       ...settings,
                       sessionTimeout: parseInt(e.target.value),
-                    })
-                  }
+                    });
+                  }}
                 />
               </div>
               <Separator />

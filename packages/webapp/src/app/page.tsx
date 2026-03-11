@@ -1,62 +1,77 @@
 'use client';
 
-import { Activity, Bot, Cpu, MessageSquare, Mic, TrendingUp, Wifi, WifiOff } from 'lucide-react';
+import { Activity, Bot, Cpu, Loader2, MessageSquare, Mic, Wifi, WifiOff } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layouts/dashboard-layout';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { api } from '@/services/api';
+import type { Device, AgentSession } from '@/types';
 
-// Stats data
-const stats = [
-  {
-    title: 'Total Messages',
-    value: '1,234',
-    change: '+12%',
-    icon: MessageSquare,
-    color: 'text-blue-500',
-  },
-  {
-    title: 'Active Devices',
-    value: '3',
-    change: '+1',
-    icon: Cpu,
-    color: 'text-green-500',
-  },
-  {
-    title: 'Voice Commands',
-    value: '567',
-    change: '+23%',
-    icon: Mic,
-    color: 'text-purple-500',
-  },
-  {
-    title: 'Uptime',
-    value: '99.9%',
-    change: '',
-    icon: Activity,
-    color: 'text-orange-500',
-  },
-];
+export default function DashboardPage(): React.ReactElement {
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [sessions, setSessions] = useState<AgentSession[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-// Mock devices
-const devices = [
-  { id: '1', name: 'ESP32-Living Room', status: 'online', lastSeen: 'Just now' },
-  { id: '2', name: 'ESP32-Bedroom', status: 'offline', lastSeen: '2 hours ago' },
-  { id: '3', name: 'ESP32-Kitchen', status: 'online', lastSeen: '5 min ago' },
-];
+  useEffect(() => {
+    async function fetchData(): Promise<void> {
+      try {
+        const [devicesRes, sessionsRes] = await Promise.all([
+          api.getDevices().catch(() => ({ devices: [] })),
+          api.getSessions().catch(() => ({ sessions: [] })),
+        ]);
+        setDevices(devicesRes.devices);
+        setSessions(sessionsRes.sessions);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    void fetchData();
+  }, []);
 
-// Mock recent messages
-const recentMessages = [
-  { id: '1', text: 'Turn on the living room lights', time: '2 min ago', type: 'voice' },
-  { id: '2', text: "What's the weather today?", time: '15 min ago', type: 'text' },
-  { id: '3', text: 'Play some music', time: '1 hour ago', type: 'voice' },
-  { id: '4', text: 'Set a timer for 30 minutes', time: '2 hours ago', type: 'text' },
-];
+  const onlineDevices = devices.filter((d) => d.status === 'online').length;
 
-export default function DashboardPage() {
+  const stats = [
+    {
+      title: 'Total Messages',
+      value: sessions.reduce((sum, s) => sum + (s.messageCount ?? 0), 0).toString(),
+      icon: MessageSquare,
+      color: 'text-blue-500',
+    },
+    {
+      title: 'Active Devices',
+      value: onlineDevices.toString(),
+      icon: Cpu,
+      color: 'text-green-500',
+    },
+    {
+      title: 'Chat Sessions',
+      value: sessions.length.toString(),
+      icon: Mic,
+      color: 'text-purple-500',
+    },
+    {
+      title: 'Total Devices',
+      value: devices.length.toString(),
+      icon: Activity,
+      color: 'text-orange-500',
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -91,12 +106,6 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                {stat.change && (
-                  <p className="text-xs text-muted-foreground">
-                    <TrendingUp className="mr-1 inline h-3 w-3 text-green-500" />
-                    {stat.change} from last week
-                  </p>
-                )}
               </CardContent>
             </Card>
           ))}
@@ -114,71 +123,83 @@ export default function DashboardPage() {
               <CardDescription>Your ESP32 devices and their status</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {devices.map((device) => (
-                  <div
-                    key={device.id}
-                    className="flex items-center justify-between rounded-lg border p-3"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`rounded-full p-2 ${device.status === 'online' ? 'bg-green-100 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-800'}`}
-                      >
-                        {device.status === 'online' ? (
-                          <Wifi className="h-4 w-4 text-green-600 dark:text-green-400" />
-                        ) : (
-                          <WifiOff className="h-4 w-4 text-gray-400" />
-                        )}
+              {devices.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No devices registered yet.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {devices.slice(0, 5).map((device) => (
+                    <div
+                      key={device.id}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`rounded-full p-2 ${device.status === 'online' ? 'bg-green-100 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-800'}`}
+                        >
+                          {device.status === 'online' ? (
+                            <Wifi className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <WifiOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">{device.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {device.lastSeen ?? 'Never'}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{device.name}</p>
-                        <p className="text-xs text-muted-foreground">{device.lastSeen}</p>
-                      </div>
+                      <Badge variant={device.status === 'online' ? 'default' : 'secondary'}>
+                        {device.status}
+                      </Badge>
                     </div>
-                    <Badge variant={device.status === 'online' ? 'default' : 'secondary'}>
-                      {device.status}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
               <Button variant="outline" className="mt-4 w-full" asChild>
                 <Link href="/devices">View All Devices</Link>
               </Button>
             </CardContent>
           </Card>
 
-          {/* Recent Messages Card */}
+          {/* Recent Sessions Card */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Recent Messages
+                Recent Sessions
               </CardTitle>
-              <CardDescription>Latest conversations with UE-Bot</CardDescription>
+              <CardDescription>Latest agent conversations</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentMessages.map((message) => (
-                  <div key={message.id} className="flex items-start gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
-                        {message.type === 'voice' ? (
-                          <Mic className="h-4 w-4" />
-                        ) : (
+              {sessions.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No chat sessions yet. Start a conversation!
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {sessions.slice(0, 5).map((session) => (
+                    <div key={session.id} className="flex items-start gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>
                           <MessageSquare className="h-4 w-4" />
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="text-sm">{message.text}</p>
-                      <p className="text-xs text-muted-foreground">{message.time}</p>
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="text-sm">{session.title ?? 'Untitled session'}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(session.createdAt).toLocaleDateString()}
+                          {session.messageCount !== null &&
+                            session.messageCount !== undefined &&
+                            ` · ${session.messageCount} messages`}
+                        </p>
+                      </div>
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {message.type}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
               <Button variant="outline" className="mt-4 w-full" asChild>
                 <Link href="/chat">Open Chat</Link>
               </Button>
