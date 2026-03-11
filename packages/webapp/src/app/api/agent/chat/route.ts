@@ -15,41 +15,63 @@ import {
 } from '@ue-bot/agent-core';
 import { NextRequest } from 'next/server';
 
-import { getMemoryStore, getSessionManager } from '@/lib/db';
+import { getAuthUser } from '@/lib/auth';
+import { getMemoryStore, getSessionManager, isPostgresConfigured } from '@/lib/db';
 
-// Initialize agent (singleton)
-let agent: Agent | null = null;
+/**
+ * Resolve the user's API key from their DB settings, falling back to server env.
+ */
+async function getUserApiKey(
+  userId: string | undefined
+): Promise<{ apiKey: string; model: string }> {
+  // Try per-user key from DB settings
+  if (userId && isPostgresConfigured()) {
+    const { getDb, SettingsRepository } = await import('@ue-bot/database');
+    const db = getDb();
+    const settingsRepo = new SettingsRepository(db);
+    const settings = await settingsRepo.getAll(userId);
 
-async function getAgent(): Promise<Agent> {
-  if (!agent) {
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      throw new Error('GROQ_API_KEY environment variable not set');
+    if (settings.groqApiKey) {
+      return {
+        apiKey: settings.groqApiKey,
+        model: settings.providerModel || process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+      };
     }
-
-    const provider = new GroqProvider({
-      apiKey,
-      model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
-    });
-
-    // Initialize memory store (Postgres or SQLite based on env)
-    await getMemoryStore();
-
-    const registry = new ToolRegistry();
-    registry.registerMany([
-      ...createFsTools(),
-      ...createRuntimeTools(),
-      ...createWebTools(process.env.BRAVE_SEARCH_API_KEY),
-      ...createMemoryTools(),
-    ]);
-
-    agent = new Agent(provider, registry, {
-      workingDirectory: process.env.AGENT_WORKING_DIR || process.cwd(),
-      maxIterations: parseInt(process.env.AGENT_MAX_ITERATIONS || '10'),
-    });
   }
 
-  return agent;
+  // Fallback to server-wide env var
+  const envKey = process.env.GROQ_API_KEY;
+  if (!envKey) {
+    throw new Error(
+      'No API key configured. Please add your Groq API key in Settings → API Key Configuration.'
+    );
+  }
+  return {
+    apiKey: envKey,
+    model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+  };
+}
+
+/**
+ * Create an Agent instance for a given API key + model.
+ */
+async function createAgent(apiKey: string, model: string): Promise<Agent> {
+  const provider = new GroqProvider({ apiKey, model });
+
+  await getMemoryStore();
+
+  const registry = new ToolRegistry();
+  registry.registerMany([
+    ...createFsTools(),
+    ...createRuntimeTools(),
+    ...createWebTools(process.env.BRAVE_SEARCH_API_KEY),
+    ...createMemoryTools(),
+  ]);
+
+  return new Agent(provider, registry, {
+    workingDirectory: process.env.AGENT_WORKING_DIR || process.cwd(),
+    maxIterations: parseInt(process.env.AGENT_MAX_ITERATIONS || '10'),
+  });
 }
 
 /**
@@ -65,7 +87,10 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    const agent = await getAgent();
+    // Resolve per-user API key
+    const user = await getAuthUser(request);
+    const { apiKey, model } = await getUserApiKey(user?.sub);
+    const agent = await createAgent(apiKey, model);
     const sessions = await getSessionManager();
 
     // Get or create session

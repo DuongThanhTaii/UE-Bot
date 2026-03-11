@@ -2,7 +2,8 @@
 
 import {
   Bell,
-  Globe,
+  Eye,
+  EyeOff,
   Key,
   Loader2,
   Mic,
@@ -28,12 +29,22 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/services/api';
 import { useAuthStore } from '@/stores/auth-store';
+import {
+  useSettingsStore,
+  AVAILABLE_MODELS,
+  PROVIDER_NAMES,
+  API_KEY_PLACEHOLDERS,
+  DEFAULT_MODELS,
+  type ProviderType,
+} from '@/stores/settings-store';
 
 export default function SettingsPage(): React.ReactElement {
   const { theme, setTheme } = useTheme();
   const { user } = useAuthStore();
+  const { setProvider } = useSettingsStore();
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   // Settings state
   const [settings, setSettings] = useState({
@@ -54,8 +65,10 @@ export default function SettingsPage(): React.ReactElement {
     voiceSpeed: 1.0,
     voiceVolume: 0.8,
 
-    // AI
-    aiModel: 'llama-3.1-8b-instant',
+    // AI / API Key
+    providerType: 'groq' as ProviderType,
+    groqApiKey: '',
+    providerModel: 'llama-3.3-70b-versatile',
     maxTokens: 2048,
     temperature: 0.7,
 
@@ -102,6 +115,12 @@ export default function SettingsPage(): React.ReactElement {
         flat[k] = String(v);
       }
       await api.saveSettings(flat);
+      // Sync provider info to Zustand store so isConfigured reflects reality
+      setProvider({
+        type: settings.providerType,
+        apiKey: settings.groqApiKey,
+        model: settings.providerModel,
+      });
       setSaveMessage('Settings saved successfully!');
       setTimeout(() => {
         setSaveMessage('');
@@ -376,63 +395,139 @@ export default function SettingsPage(): React.ReactElement {
             </CardContent>
           </Card>
 
-          {/* AI Settings */}
-          <Card>
+          {/* API Key Settings */}
+          <Card className="lg:col-span-2 border-primary/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                AI Configuration
+                <Key className="h-5 w-5 text-primary" />
+                API Key Configuration
               </CardTitle>
-              <CardDescription>Configure AI model and parameters</CardDescription>
+              <CardDescription>
+                Enter your own API key to use the AI Agent. Get a free key from{' '}
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  console.groq.com
+                </a>
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="aiModel">Model</Label>
-                <select
-                  id="aiModel"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2"
-                  value={settings.aiModel}
-                  onChange={(e) => {
-                    setSettings({ ...settings, aiModel: e.target.value });
-                  }}
-                >
-                  <option value="llama-3.1-8b-instant">Llama 3.1 8B (Fast)</option>
-                  <option value="llama-3.1-70b-versatile">Llama 3.1 70B (Smart)</option>
-                  <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
-                </select>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Provider */}
+                <div className="space-y-2">
+                  <Label htmlFor="providerType">Provider</Label>
+                  <select
+                    id="providerType"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2"
+                    value={settings.providerType}
+                    onChange={(e) => {
+                      const type = e.target.value as ProviderType;
+                      setSettings({
+                        ...settings,
+                        providerType: type,
+                        providerModel: DEFAULT_MODELS[type],
+                      });
+                    }}
+                  >
+                    {(Object.keys(PROVIDER_NAMES) as ProviderType[]).map((p) => (
+                      <option key={p} value={p}>
+                        {PROVIDER_NAMES[p]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Model */}
+                <div className="space-y-2">
+                  <Label htmlFor="providerModel">Model</Label>
+                  <select
+                    id="providerModel"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2"
+                    value={settings.providerModel}
+                    onChange={(e) => {
+                      setSettings({ ...settings, providerModel: e.target.value });
+                    }}
+                  >
+                    {AVAILABLE_MODELS[settings.providerType].map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+              {/* API Key */}
               <div className="space-y-2">
-                <Label htmlFor="maxTokens">Max Tokens: {settings.maxTokens}</Label>
-                <input
-                  type="range"
-                  id="maxTokens"
-                  min="256"
-                  max="4096"
-                  step="256"
-                  value={settings.maxTokens}
-                  onChange={(e) => {
-                    setSettings({ ...settings, maxTokens: parseInt(e.target.value) });
-                  }}
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="temperature">Temperature: {settings.temperature}</Label>
-                <input
-                  type="range"
-                  id="temperature"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={settings.temperature}
-                  onChange={(e) => {
-                    setSettings({ ...settings, temperature: parseFloat(e.target.value) });
-                  }}
-                  className="w-full"
-                />
+                <Label htmlFor="groqApiKey">API Key</Label>
+                <div className="relative">
+                  <Input
+                    id="groqApiKey"
+                    type={showApiKey ? 'text' : 'password'}
+                    placeholder={API_KEY_PLACEHOLDERS[settings.providerType]}
+                    value={settings.groqApiKey}
+                    onChange={(e) => {
+                      setSettings({ ...settings, groqApiKey: e.target.value });
+                    }}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => {
+                      setShowApiKey(!showApiKey);
+                    }}
+                  >
+                    {showApiKey ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Lower = more focused, Higher = more creative
+                  Your key is stored securely per-account and never shared.
                 </p>
+              </div>
+              <Separator />
+              {/* Temperature & Max Tokens */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="maxTokens">Max Tokens: {settings.maxTokens}</Label>
+                  <input
+                    type="range"
+                    id="maxTokens"
+                    min="256"
+                    max="4096"
+                    step="256"
+                    value={settings.maxTokens}
+                    onChange={(e) => {
+                      setSettings({ ...settings, maxTokens: parseInt(e.target.value) });
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="temperature">Temperature: {settings.temperature}</Label>
+                  <input
+                    type="range"
+                    id="temperature"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={settings.temperature}
+                    onChange={(e) => {
+                      setSettings({ ...settings, temperature: parseFloat(e.target.value) });
+                    }}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Lower = more focused, Higher = more creative
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
