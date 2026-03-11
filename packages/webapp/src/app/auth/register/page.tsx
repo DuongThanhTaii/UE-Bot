@@ -1,6 +1,6 @@
 'use client';
 
-import { Bot, Check, Eye, EyeOff, Github, Loader2, Mail, X } from 'lucide-react';
+import { Bot, Check, ExternalLink, Eye, EyeOff, Loader2, Mail, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,10 +17,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useAuthStore } from '@/stores/auth-store';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { register, isLoading } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
@@ -57,39 +58,16 @@ export default function RegisterPage() {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // Simulate registration API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Store auth state (in real app, use proper auth)
-      localStorage.setItem(
-        'ue-bot-auth',
-        JSON.stringify({
-          user: { email: formData.email, name: formData.name },
-          token: 'demo-token',
-        })
-      );
-
+    const success = await register(formData.name, formData.email, formData.password);
+    if (success) {
       router.push('/');
-    } catch {
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+    } else {
+      setError('Registration failed. Email may already be registered.');
     }
   };
 
-  const handleSocialLogin = async (provider: string) => {
-    setIsLoading(true);
-    setError('');
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert(`${provider} registration would be implemented with OAuth`);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSocialLogin = (provider: string) => {
+    setError(`${provider} registration is not yet available.`);
   };
 
   return (
@@ -118,7 +96,9 @@ export default function RegisterPage() {
                 type="text"
                 placeholder="Nguyen Van A"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                }}
                 disabled={isLoading}
                 required
               />
@@ -131,7 +111,9 @@ export default function RegisterPage() {
                 type="email"
                 placeholder="name@hcmue.edu.vn"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                }}
                 disabled={isLoading}
                 required
               />
@@ -145,7 +127,9 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Create a strong password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                  }}
                   disabled={isLoading}
                   required
                 />
@@ -154,7 +138,9 @@ export default function RegisterPage() {
                   variant="ghost"
                   size="icon"
                   className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => {
+                    setShowPassword(!showPassword);
+                  }}
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -189,7 +175,9 @@ export default function RegisterPage() {
                 type="password"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, confirmPassword: e.target.value });
+                }}
                 disabled={isLoading}
                 required
               />
@@ -242,7 +230,9 @@ export default function RegisterPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => handleSocialLogin('Google')}
+                onClick={() => {
+                  handleSocialLogin('Google');
+                }}
                 disabled={isLoading}
               >
                 <Mail className="mr-2 h-4 w-4" />
@@ -251,10 +241,12 @@ export default function RegisterPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => handleSocialLogin('GitHub')}
+                onClick={() => {
+                  handleSocialLogin('GitHub');
+                }}
                 disabled={isLoading}
               >
-                <Github className="mr-2 h-4 w-4" />
+                <ExternalLink className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
             </div>

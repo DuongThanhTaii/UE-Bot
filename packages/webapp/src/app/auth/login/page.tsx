@@ -1,6 +1,6 @@
 'use client';
 
-import { Bot, Eye, EyeOff, Github, Loader2, Mail } from 'lucide-react';
+import { Bot, ExternalLink, Eye, EyeOff, Loader2, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,10 +17,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useAuthStore } from '@/stores/auth-store';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,44 +33,22 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
 
-    try {
-      // Simulate login API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (!formData.email || !formData.password) {
+      setError('Please enter email and password');
+      return;
+    }
 
-      // For demo, accept any credentials
-      if (formData.email && formData.password) {
-        // Store auth state (in real app, use proper auth)
-        localStorage.setItem(
-          'ue-bot-auth',
-          JSON.stringify({
-            user: { email: formData.email, name: 'UE-Bot User' },
-            token: 'demo-token',
-          })
-        );
-        router.push('/');
-      } else {
-        setError('Please enter email and password');
-      }
-    } catch {
-      setError('Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+    const success = await login(formData.email, formData.password);
+    if (success) {
+      router.push('/');
+    } else {
+      setError('Invalid email or password. Please try again.');
     }
   };
 
-  const handleSocialLogin = async (provider: string) => {
-    setIsLoading(true);
-    setError('');
-
-    try {
-      // Simulate OAuth flow
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert(`${provider} login would be implemented with OAuth`);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSocialLogin = (provider: string) => {
+    setError(`${provider} login is not yet available.`);
   };
 
   return (
@@ -98,7 +77,9 @@ export default function LoginPage() {
                 type="email"
                 placeholder="name@hcmue.edu.vn"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                }}
                 disabled={isLoading}
                 required
               />
@@ -117,7 +98,9 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                  }}
                   disabled={isLoading}
                   required
                 />
@@ -126,7 +109,9 @@ export default function LoginPage() {
                   variant="ghost"
                   size="icon"
                   className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => {
+                    setShowPassword(!showPassword);
+                  }}
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -161,7 +146,9 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => handleSocialLogin('Google')}
+                onClick={() => {
+                  handleSocialLogin('Google');
+                }}
                 disabled={isLoading}
               >
                 <Mail className="mr-2 h-4 w-4" />
@@ -170,10 +157,12 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => handleSocialLogin('GitHub')}
+                onClick={() => {
+                  handleSocialLogin('GitHub');
+                }}
                 disabled={isLoading}
               >
-                <Github className="mr-2 h-4 w-4" />
+                <ExternalLink className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
             </div>
