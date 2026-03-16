@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.0.0",
-    "drizzle-kit": "^0.30.0",
+    "drizzle-kit": "^0.31.9",
     "rimraf": "^5.0.0",
     "tsx": "^4.11.0",
     "typescript": "^5.5.0",
