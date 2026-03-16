@@ -18,13 +18,13 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.0",
+    "@neondatabase/serverless": "^1.0.2",
     "@ue-bot/agent-core": "workspace:*",
-    "drizzle-orm": "^0.36.0",
-    "bcryptjs": "^2.4.3"
+    "drizzle-orm": "^0.45.1",
+    "bcryptjs": "^3.0.3"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.0.0",
     "drizzle-kit": "^0.30.0",
     "rimraf": "^5.0.0",
