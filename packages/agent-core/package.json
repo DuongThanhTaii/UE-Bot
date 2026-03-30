@@ -15,15 +15,15 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.72.1",
-    "@mozilla/readability": "^0.5.0",
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@mozilla/readability": "^0.6.0",
     "@ue-bot/shared": "workspace:*",
-    "better-sqlite3": "^9.4.0",
-    "groq-sdk": "^0.8.0",
-    "jsdom": "^24.0.0",
-    "openai": "^6.17.0",
-    "zod": "^3.22.0",
-    "zod-to-json-schema": "^3.22.0"
+    "better-sqlite3": "^12.8.0",
+    "groq-sdk": "^1.1.2",
+    "jsdom": "^29.0.1",
+    "openai": "^6.33.0",
+    "zod": "^4.3.6",
+    "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.8",
