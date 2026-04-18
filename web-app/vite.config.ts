@@ -47,22 +47,31 @@ export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '')
   const isTauriBuild = process.env.IS_TAURI === 'true'
+  const isVercelBuild = process.env.VERCEL === '1'
 
-  return {
-    base: isTauriBuild ? './' : '/',
-    plugins: [
+  const plugins: Plugin[] = [
+    react(),
+    tailwindcss(),
+    nodePolyfills({
+      include: ['path'],
+    }),
+    injectGoogleAnalytics(env.GA_MEASUREMENT_ID),
+  ]
+
+  // In deploy-only repo, routes are already generated; skip generator plugin on Vercel.
+  if (!isVercelBuild) {
+    plugins.unshift(
       TanStackRouterVite({
         target: 'react',
         autoCodeSplitting: true,
         routeFileIgnorePattern: '.((test).ts)|test-page',
-      }),
-      react(),
-      tailwindcss(),
-      nodePolyfills({
-        include: ['path'],
-      }),
-      injectGoogleAnalytics(env.GA_MEASUREMENT_ID),
-    ],
+      })
+    )
+  }
+
+  return {
+    base: isTauriBuild ? './' : '/',
+    plugins,
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

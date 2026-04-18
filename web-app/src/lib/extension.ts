@@ -7,23 +7,17 @@ const builtinExtensionLoaders: Record<
   () => Promise<{ default: new (...args: any[]) => BaseExtension }>
 > = {
   '@janhq/assistant-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/assistant-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
   '@janhq/conversational-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/conversational-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
   '@janhq/download-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/download-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
   '@janhq/llamacpp-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/llamacpp-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
   '@janhq/rag-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/rag-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
   '@janhq/vector-db-extension': () =>
-    // @ts-ignore bundled extension dist file
-    import('../../../extensions/vector-db-extension/dist/index.js'),
+    import('@/shims/builtin-extension'),
 }
 
 /**
