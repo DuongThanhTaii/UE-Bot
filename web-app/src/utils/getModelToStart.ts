@@ -1,5 +1,6 @@
 import { localStorageKey } from '@/constants/localStorage'
 import type { ModelInfo } from '@janhq/core'
+import { isPlatformTauri } from '@/lib/platform/utils'
 
 export const getLastUsedModel = (): {
   provider: string
@@ -22,6 +23,32 @@ export const getModelToStart = (params: {
 }): { model: string; provider: ModelProvider } | null => {
   const { selectedModel, selectedProvider, getProviderByName } = params
 
+  const getPreferredProvider = () =>
+    isPlatformTauri() ? getProviderByName('llamacpp') : getProviderByName('groq')
+
+  const getAnyProviderWithModel = () => {
+    const preferred = getPreferredProvider()
+    if (preferred?.models?.length) return preferred
+
+    const fallbackProviderNames = [
+      'groq',
+      'openai',
+      'openrouter',
+      'anthropic',
+      'gemini',
+      'mistral',
+      'llamacpp',
+      'jan',
+    ]
+
+    for (const providerName of fallbackProviderNames) {
+      const provider = getProviderByName(providerName)
+      if (provider?.models?.length) return provider
+    }
+
+    return null
+  }
+
   // Use last used model if available
   const lastUsedModel = getLastUsedModel()
   if (lastUsedModel) {
@@ -29,16 +56,11 @@ export const getModelToStart = (params: {
     if (provider && provider.models.some((m) => m.id === lastUsedModel.model)) {
       return { model: lastUsedModel.model, provider }
     } else {
-      // Last used model not found under provider, fallback to first llamacpp model
-      const llamacppProvider = getProviderByName('llamacpp')
-      if (
-        llamacppProvider &&
-        llamacppProvider.models &&
-        llamacppProvider.models.length > 0
-      ) {
+      const fallbackProvider = getAnyProviderWithModel()
+      if (fallbackProvider) {
         return {
-          model: llamacppProvider.models[0].id,
-          provider: llamacppProvider,
+          model: fallbackProvider.models[0].id,
+          provider: fallbackProvider,
         }
       }
     }
@@ -52,16 +74,11 @@ export const getModelToStart = (params: {
     }
   }
 
-  // Use first model from llamacpp provider
-  const llamacppProvider = getProviderByName('llamacpp')
-  if (
-    llamacppProvider &&
-    llamacppProvider.models &&
-    llamacppProvider.models.length > 0
-  ) {
+  const fallbackProvider = getAnyProviderWithModel()
+  if (fallbackProvider) {
     return {
-      model: llamacppProvider.models[0].id,
-      provider: llamacppProvider,
+      model: fallbackProvider.models[0].id,
+      provider: fallbackProvider,
     }
   }
 

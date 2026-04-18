@@ -13,6 +13,7 @@ import { predefinedProviders } from '@/constants/providers'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthRequiredDialog } from '@/containers/dialogs/AuthRequiredDialog'
+import { isPlatformTauri } from '@/lib/platform/utils'
 
 type ThreadModel = {
   id: string
@@ -73,7 +74,7 @@ function Index() {
     setCurrentThreadId(undefined)
   }, [setCurrentThreadId])
 
-  if (!hasValidProviders) {
+  if (isPlatformTauri() && !hasValidProviders) {
     return <SetupScreen />
   }
 

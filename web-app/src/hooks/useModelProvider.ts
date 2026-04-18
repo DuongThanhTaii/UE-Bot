@@ -26,7 +26,7 @@ export const useModelProvider = create<ModelProviderState>()(
   persist(
     (set, get) => ({
       providers: [],
-      selectedProvider: 'llamacpp',
+      selectedProvider: IS_WEB_APP ? 'groq' : 'llamacpp',
       selectedModel: null,
       deletedModels: [],
       getModelBy: (modelId: string) => {
