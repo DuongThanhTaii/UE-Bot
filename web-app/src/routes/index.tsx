@@ -10,6 +10,9 @@ import { useModelProvider } from '@/hooks/useModelProvider'
 import SetupScreen from '@/containers/SetupScreen'
 import { route } from '@/constants/routes'
 import { predefinedProviders } from '@/constants/providers'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/useAuth'
+import { AuthRequiredDialog } from '@/containers/dialogs/AuthRequiredDialog'
 
 type ThreadModel = {
   id: string
@@ -19,7 +22,7 @@ type ThreadModel = {
 type SearchParams = {
   threadModel?: ThreadModel
 }
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useThreads } from '@/hooks/useThreads'
 import DropdownModelProvider from '@/containers/DropdownModelProvider'
 
@@ -40,6 +43,9 @@ function Index() {
   const search = useSearch({ from: route.home as any })
   const threadModel = search.threadModel
   const { setCurrentThreadId } = useThreads()
+  const isSyncEnabled = useAuth((state) => state.isSyncEnabled)
+  const isLoggedIn = useAuth((state) => Boolean(state.user))
+  const [showAuthRequiredDialog, setShowAuthRequiredDialog] = useState(false)
   useTools()
 
   // Conditional to check if there are any valid providers
@@ -74,8 +80,17 @@ function Index() {
   return (
     <div className="flex h-full flex-col justify-center">
       <HeaderPage>
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center justify-between gap-2 w-full">
           <DropdownModelProvider model={threadModel} />
+          {isSyncEnabled && !isLoggedIn && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowAuthRequiredDialog(true)}
+            >
+              Login
+            </Button>
+          )}
         </div>
       </HeaderPage>
       <div
@@ -106,6 +121,10 @@ function Index() {
           </div>
         </div>
       </div>
+      <AuthRequiredDialog
+        open={showAuthRequiredDialog}
+        onOpenChange={setShowAuthRequiredDialog}
+      />
     </div>
   )
 }

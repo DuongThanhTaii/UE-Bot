@@ -880,6 +880,15 @@ function ThreadDetail() {
       <HeaderPage>
         <div className="flex items-center justify-between w-full pr-2">
           <DropdownModelProvider model={threadModel} />
+          {isSyncEnabled && !isLoggedIn && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowAuthRequiredDialog(true)}
+            >
+              Login
+            </Button>
+          )}
         </div>
       </HeaderPage>
       <div className="flex flex-1 flex-col h-full overflow-hidden">
