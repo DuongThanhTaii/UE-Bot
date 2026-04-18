@@ -136,13 +136,46 @@ export const useModelProvider = create<ModelProviderState>()(
               active: existingProvider ? existingProvider?.active : true,
             }
           })
-          return {
-            providers: [
+          const nextProviders = [
               ...updatedProviders,
               ...existingProviders.filter(
                 (e) => !updatedProviders.some((p) => p.provider === e.provider)
               ),
-            ],
+            ]
+
+          const currentSelectedProvider = nextProviders.find(
+            (provider) => provider.provider === state.selectedProvider
+          )
+
+          const hasValidSelectedModel =
+            !!state.selectedModel &&
+            !!currentSelectedProvider?.models?.some(
+              (model) => model.id === state.selectedModel?.id
+            )
+
+          const preferredProviderName = IS_WEB_APP ? 'groq' : 'llamacpp'
+          const preferredProvider = nextProviders.find(
+            (provider) => provider.provider === preferredProviderName
+          )
+
+          const fallbackProvider =
+            preferredProvider?.models?.length
+              ? preferredProvider
+              : nextProviders.find((provider) => provider.models?.length)
+
+          const shouldRehydrateSelection =
+            !currentSelectedProvider ||
+            !currentSelectedProvider.models?.length ||
+            !hasValidSelectedModel
+
+          return {
+            providers: nextProviders,
+            selectedProvider: shouldRehydrateSelection
+              ? (fallbackProvider?.provider ?? state.selectedProvider)
+              : state.selectedProvider,
+            selectedModel: shouldRehydrateSelection
+              ? (fallbackProvider?.models?.[0] ?? null)
+              : state.selectedModel,
           }
         }),
       updateProvider: (providerName, data) => {

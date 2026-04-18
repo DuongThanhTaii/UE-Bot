@@ -7,9 +7,17 @@ import { providerModels } from '@/constants/models'
 import { getModelCapabilities } from '@/lib/models'
 import type { ProvidersService } from './types'
 
+declare const IS_WEB_APP: boolean
+
+const LOCAL_ONLY_PROVIDERS = new Set(['llamacpp', 'mlx', 'jan', 'foundation-models'])
+
 export class DefaultProvidersService implements ProvidersService {
   async getProviders(): Promise<ModelProvider[]> {
-    const builtinProviders = predefinedProviders.map((provider) => {
+    const sourceProviders = IS_WEB_APP
+      ? predefinedProviders.filter((provider) => !LOCAL_ONLY_PROVIDERS.has(provider.provider))
+      : predefinedProviders
+
+    const builtinProviders = sourceProviders.map((provider) => {
       let models = provider.models as Model[]
       if (Object.keys(providerModels).includes(provider.provider)) {
         const builtInModels = providerModels[
