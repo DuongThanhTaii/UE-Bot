@@ -1,0 +1,13 @@
+{
+  "welcome": "Welcome to UE Bot",
+  "description": "To get started, quickly launch with UE Bot Model or choose to set up your own local or remote provider",
+  "descriptionWeb": "To get started, you'll need to connect to a cloud model using an API key",
+  "quickStart": "Quick start with UE Bot Model",
+  "quickStartDescription": "No setup needed",
+  "quickStartFailed": "Something went wrong. Please try again.",
+  "downloading": "Downloading UE Bot Model...",
+  "downloadingDescription": "Please wait while we download the model. This may take a few minutes.",
+  "orDivider": "or",
+  "localModel": "Set up local model",
+  "remoteProvider": "Set up remote provider"
+}

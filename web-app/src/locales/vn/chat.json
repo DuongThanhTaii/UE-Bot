@@ -1,0 +1,12 @@
+{
+  "welcome": "Chào bạn, hôm nay tôi có thể giúp gì?",
+  "description": "Hãy nhập điều bạn muốn làm với UE Bot.",
+  "temporaryChat": "Trò chuyện tạm thời",
+  "temporaryChatDescription": "Bắt đầu một cuộc trò chuyện tạm thời và cuộc trò chuyện này sẽ không được lưu vào lịch sử.",
+  "status": {
+    "empty": "Chưa có cuộc trò chuyện nào"
+  },
+  "sendMessage": "Gửi tin nhắn",
+  "newConversation": "Cuộc trò chuyện mới",
+  "clearHistory": "Xóa lịch sử"
+}

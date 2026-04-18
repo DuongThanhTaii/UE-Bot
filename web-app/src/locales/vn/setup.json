@@ -1,0 +1,13 @@
+{
+  "welcome": "Chào mừng đến với UE Bot",
+  "description": "Để bắt đầu, bạn có thể khởi chạy nhanh với UE Bot Model hoặc tự thiết lập mô hình cục bộ hay nhà cung cấp từ xa.",
+  "descriptionWeb": "Để bắt đầu, bạn cần kết nối tới một mô hình đám mây bằng API key.",
+  "quickStart": "Bắt đầu nhanh với UE Bot Model",
+  "quickStartDescription": "Không cần thiết lập thêm",
+  "quickStartFailed": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+  "downloading": "Đang tải UE Bot Model...",
+  "downloadingDescription": "Vui lòng chờ trong khi mô hình đang được tải xuống. Quá trình này có thể mất vài phút.",
+  "orDivider": "hoặc",
+  "localModel": "Thiết lập mô hình cục bộ",
+  "remoteProvider": "Thiết lập nhà cung cấp từ xa"
+}

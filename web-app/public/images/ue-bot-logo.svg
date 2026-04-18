@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">UE Bot</title>
+  <desc id="desc">UE Bot placeholder logo</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B5A6E" />
+      <stop offset="100%" stop-color="#083C4B" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB11A" />
+      <stop offset="100%" stop-color="#FF8A00" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)" />
+  <circle cx="96" cy="32" r="12" fill="url(#accent)" />
+  <path
+    d="M27 36v34c0 11 9 20 20 20h6c11 0 20-9 20-20V36"
+    fill="none"
+    stroke="#F3F8FA"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="12"
+  />
+  <path
+    d="M102 44c0 19-15 34-34 34H54v14h18c17 0 30-13 30-30"
+    fill="none"
+    stroke="#F3F8FA"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="12"
+  />
+  <path
+    d="M33 98c7 8 17 12 28 12h13"
+    fill="none"
+    stroke="url(#accent)"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+</svg>
