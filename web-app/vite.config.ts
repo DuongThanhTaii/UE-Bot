@@ -66,7 +66,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@janhq/conversational-extension': path.resolve(__dirname, '../extensions/conversational-extension/src/index.ts'),
+        '@janhq/conversational-extension': path.resolve(__dirname, './src/shims/conversational-extension.ts'),
         '@janhq/tauri-plugin-hardware-api': path.resolve(
           __dirname,
           '../src-tauri/plugins/tauri-plugin-hardware/guest-js/index.ts'
