@@ -54,8 +54,6 @@ import { ExtensionTypeEnum, VectorDBExtension } from '@janhq/core'
 import { ExtensionManager } from '@/lib/extension'
 import { Shimmer } from '@/components/ai-elements/shimmer'
 import { useAgentMode } from '@/hooks/useAgentMode'
-import { useAuth } from '@/hooks/useAuth'
-import { AuthRequiredDialog } from '@/containers/dialogs/AuthRequiredDialog'
 
 const CHAT_STATUS = {
   STREAMING: 'streaming',
@@ -94,10 +92,6 @@ function ThreadDetail() {
   const updateMessage = useMessages((state) => state.updateMessage)
   const deleteMessage = useMessages((state) => state.deleteMessage)
   const currentThread = useRef<string | undefined>(undefined)
-  const consumePrompt = useAuth((state) => state.consumePrompt)
-  const isSyncEnabled = useAuth((state) => state.isSyncEnabled)
-  const isLoggedIn = useAuth((state) => Boolean(state.user))
-  const [showAuthRequiredDialog, setShowAuthRequiredDialog] = useState(false)
 
   useTools()
 
@@ -497,14 +491,6 @@ function ThreadDetail() {
       text: string,
       files?: Array<{ type: string; mediaType: string; url: string }>
     ) => {
-      if (isSyncEnabled && !isLoggedIn) {
-        const usage = await consumePrompt()
-        if (!usage.allowed) {
-          setShowAuthRequiredDialog(true)
-          return
-        }
-      }
-
       // Get all attachments from the store (includes both images and documents)
       const allAttachments = getAttachments(attachmentsKey)
 
@@ -596,9 +582,6 @@ function ThreadDetail() {
       clearAttachmentsForThread(attachmentsKey)
     },
     [
-      consumePrompt,
-      isSyncEnabled,
-      isLoggedIn,
       sendMessage,
       threadId,
       thread,
@@ -880,15 +863,6 @@ function ThreadDetail() {
       <HeaderPage>
         <div className="flex items-center justify-between w-full pr-2">
           <DropdownModelProvider model={threadModel} />
-          {isSyncEnabled && !isLoggedIn && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAuthRequiredDialog(true)}
-            >
-              Login
-            </Button>
-          )}
         </div>
       </HeaderPage>
       <div className="flex flex-1 flex-col h-full overflow-hidden">
@@ -990,10 +964,6 @@ function ThreadDetail() {
           />
         </div>
       </div>
-      <AuthRequiredDialog
-        open={showAuthRequiredDialog}
-        onOpenChange={setShowAuthRequiredDialog}
-      />
     </div>
   )
 }
