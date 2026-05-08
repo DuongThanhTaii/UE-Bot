@@ -13,6 +13,7 @@ import { useAppState } from '@/hooks/useAppState'
 import { AppEvent, events } from '@janhq/core'
 import { SystemEvent } from '@/types/events'
 import { isDev } from '@/lib/utils'
+import { isPlatformTauri } from '@/lib/platform/utils'
 import { invoke } from '@tauri-apps/api/core'
 import { join, resourceDir } from '@tauri-apps/api/path'
 import { useProductivityIntegration } from '@/hooks/useProductivityIntegration'
@@ -34,6 +35,8 @@ type RegisterProviderRequest = {
 }
 
 async function registerRemoteProvider(provider: ModelProvider) {
+  if (!isPlatformTauri()) return
+
   // Skip llamacpp - those are local models
   if (provider.provider === 'llamacpp') return
 
@@ -72,12 +75,18 @@ async function resolveCompanionScriptPath(relativePath: string) {
     return `./${relativePath}`
   }
 
+  if (!isPlatformTauri()) {
+    return `./${relativePath}`
+  }
+
   const resourcesPath = await resourceDir()
   return join(resourcesPath, ...relativePath.split('/'))
 }
 
 // Effect to sync remote providers when providers change
 const syncRemoteProviders = () => {
+  if (!isPlatformTauri()) return
+
   const providers = useModelProvider.getState().providers
   const currentActive = new Set<string>()
 
@@ -138,6 +147,12 @@ export function DataProvider() {
 
   useEffect(() => {
     let cancelled = false
+
+    if (!isPlatformTauri()) {
+      return () => {
+        cancelled = true
+      }
+    }
 
     const syncDefaultProductivityServer = async () => {
       const shouldActivate =

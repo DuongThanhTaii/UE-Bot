@@ -55,6 +55,7 @@ import { createXai } from '@ai-sdk/xai'
 import { invoke } from '@tauri-apps/api/core'
 import { SessionInfo } from '@janhq/core'
 import { fetch as httpFetch } from '@tauri-apps/plugin-http'
+import { isPlatformTauri } from '@/lib/platform/utils'
 
 /**
  * Llama.cpp timings structure from the response
@@ -120,10 +121,25 @@ const providerMetadataExtractor: MetadataExtractor = {
 /**
  * Create a custom fetch function that injects additional parameters into the request body
  */
+type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+
+const getBaseFetch = (): FetchLike => {
+  if (isPlatformTauri()) {
+    return httpFetch
+  }
+
+  const nativeFetch = globalThis.fetch
+  if (typeof nativeFetch === 'function') {
+    return nativeFetch.bind(globalThis)
+  }
+
+  throw new Error('Fetch is not available in this environment.')
+}
+
 function createCustomFetch(
-  baseFetch: typeof httpFetch,
+  baseFetch: FetchLike,
   parameters: Record<string, unknown>
-): typeof httpFetch {
+): FetchLike {
   return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     // Only transform POST requests with JSON body
     if (init?.method === 'POST' || !init?.method) {
@@ -202,6 +218,10 @@ export class ModelFactory {
     provider?: ProviderObject,
     parameters: Record<string, unknown> = {}
   ): Promise<LanguageModel> {
+    if (!isPlatformTauri()) {
+      throw new Error('Local inference is only available in the desktop app.')
+    }
+
     // Start the model first if provider is available
     if (provider) {
       try {
@@ -229,7 +249,7 @@ export class ModelFactory {
       throw new Error(`No running session found for model: ${modelId}`)
     }
 
-    const customFetch = createCustomFetch(httpFetch, parameters)
+    const customFetch = createCustomFetch(getBaseFetch(), parameters)
 
     const model = new OpenAICompatibleChatLanguageModel(modelId, {
       provider: 'llamacpp',
@@ -264,6 +284,12 @@ export class ModelFactory {
     provider?: ProviderObject,
     parameters: Record<string, unknown> = {}
   ): Promise<LanguageModel> {
+    if (!isPlatformTauri()) {
+      throw new Error('Local inference is only available in the desktop app.')
+    }
+
+    const baseFetch = getBaseFetch()
+
     // Start the model first if provider is available
     if (provider) {
       try {
@@ -298,7 +324,7 @@ export class ModelFactory {
     }
 
     // Custom fetch that merges parameters and calls /cancel on abort
-    const customFetch: typeof httpFetch = async (
+    const customFetch: FetchLike = async (
       input: RequestInfo | URL,
       init?: RequestInit
     ): Promise<Response> => {
@@ -312,7 +338,7 @@ export class ModelFactory {
       // to stop MLX inference immediately
       if (init?.signal) {
         init.signal.addEventListener('abort', () => {
-          httpFetch(`${baseUrl}/v1/cancel`, {
+          baseFetch(`${baseUrl}/v1/cancel`, {
             method: 'POST',
             headers: { ...authHeaders, 'Content-Type': 'application/json' },
             body: JSON.stringify({}),
@@ -322,7 +348,7 @@ export class ModelFactory {
         })
       }
 
-      return httpFetch(input, init)
+      return baseFetch(input, init)
     }
 
     const model = new OpenAICompatibleChatLanguageModel(modelId, {
@@ -354,6 +380,10 @@ export class ModelFactory {
     provider?: ProviderObject,
     parameters: Record<string, unknown> = {}
   ): Promise<LanguageModel> {
+    if (!isPlatformTauri()) {
+      throw new Error('Local inference is only available in the desktop app.')
+    }
+
     const availability = await invoke<string>(
       'plugin:foundation-models|check_foundation_models_availability',
       {}
@@ -408,7 +438,7 @@ export class ModelFactory {
       Origin: 'tauri://localhost',
     }
 
-    const customFetch = createCustomFetch(httpFetch, parameters)
+    const customFetch = createCustomFetch(getBaseFetch(), parameters)
 
     const model = new OpenAICompatibleChatLanguageModel(modelId, {
       provider: 'foundation-models',
@@ -448,7 +478,7 @@ export class ModelFactory {
       apiKey: provider.api_key,
       baseURL: provider.base_url,
       headers: Object.keys(headers).length > 0 ? headers : undefined,
-      fetch: createCustomFetch(httpFetch, parameters),
+      fetch: createCustomFetch(getBaseFetch(), parameters),
     })
 
     return anthropic(modelId)
@@ -475,7 +505,7 @@ export class ModelFactory {
       apiKey: provider.api_key,
       baseURL: provider.base_url,
       headers: Object.keys(headers).length > 0 ? headers : undefined,
-      fetch: createCustomFetch(httpFetch, parameters),
+      fetch: createCustomFetch(getBaseFetch(), parameters),
     })
 
     return openai(modelId)
@@ -502,7 +532,7 @@ export class ModelFactory {
       apiKey: provider.api_key,
       baseURL: provider.base_url,
       headers: Object.keys(headers).length > 0 ? headers : undefined,
-      fetch: createCustomFetch(httpFetch, parameters),
+      fetch: createCustomFetch(getBaseFetch(), parameters),
     })
 
     return xai(modelId)
@@ -535,7 +565,7 @@ export class ModelFactory {
       baseURL: provider.base_url || 'https://api.openai.com/v1',
       headers,
       includeUsage: true,
-      fetch: createCustomFetch(httpFetch, parameters),
+      fetch: createCustomFetch(getBaseFetch(), parameters),
     })
 
     return openAICompatible.languageModel(modelId)
